@@ -48,7 +48,7 @@ class pièces: # caratéristiques des pièces
         self.valeur = valeur
         self.déplacemnt = déplacement
 
-    Pion_noir = (nom := nom_pièces[1], couleur := couleur_pièces[0] , valeur := valeur_pièces[1], déplacement := mouvement_pion ) # pas emcore fait le mouvcement des pions !!!
+    Pion_noir = (nom := nom_pièces[1], couleur := couleur_pièces[0] , valeur := valeur_pièces[1], déplacement := mouvement_pion )
     Cavalier_noir = (nom := nom_pièces[2], couleur := couleur_pièces[0], valeur := valeur_pièces[2], déplacement := mouvement_cavalier)
     Fou_noir = (nom := nom_pièces[3], couleur := couleur_pièces[0], valeur := valeur_pièces[3], déplacement := mouvement_fou)
     Tour_noir = (nom := nom_pièces[4], couleur := couleur_pièces[0], valeur := valeur_pièces[4], déplacement := mouvement_tour)
