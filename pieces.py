@@ -4,8 +4,7 @@ class pièces: # caratéristiques des pièces
     nom_pièces = [vide, "pion_noir", "cavalier_noir", "fou_noir", "tour_noir", "dame_noire", "roi_noir", "pion_blanc", "cavalier_blanc", "fou_blanc", "tour_blanc", "dame_blanche", "roi_blanc"] # nom en str
    
     valeur_pièces = [0, 1, 3, 3, 5, 10, 0, 1, 3, 3, 5, 10, 0]
-   
-    couleur_pièces = ["noir", "blanc"] # couleur en str 
+    
     
     délimitation_échiquier = (
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -42,26 +41,15 @@ class pièces: # caratéristiques des pièces
     mouvement_roi = [-11, -10, -9, -1, 1, 9, 10, 11] # mouvement identique à celui de la dame mais uniquement d'une case
     mouvement_pion = [-11, -9, -10, -20] # à préciser quand quel mouvement est possible !!!!!!
 
-    def __init__(self, nom, couleur, valeur, déplacement): # l'objectif est de pouvoir donner des attributs à chaque pièce
-        self.nom = nom
-        self.couleur = couleur
-        self.valeur = valeur
-        self.déplacemnt = déplacement
+    def __init__(self, nom = vide , couleur = " "): # l'objectif est de pouvoir donner des attributs à chaque pièce  en rentrant les information # si aucun nom m'est donné, c'est ( par défaut) vide. Pareil pour couleur
+        self.nom = nom # j'ai donné des attributs pour chaque paramètre
+        self.couleur = couleur # j'ai donné des attributs pour chaque paramètre
+        self.valeur = self.valeur_pièces[self.nom_pièces.index(nom)] # donne la valeur associée au nom donné. Reprend les éléments associés lignes 4 et 6
+        
 
-    Pion_noir = (nom := nom_pièces[1], couleur := couleur_pièces[0] , valeur := valeur_pièces[1], déplacement := mouvement_pion )
-    Cavalier_noir = (nom := nom_pièces[2], couleur := couleur_pièces[0], valeur := valeur_pièces[2], déplacement := mouvement_cavalier)
-    Fou_noir = (nom := nom_pièces[3], couleur := couleur_pièces[0], valeur := valeur_pièces[3], déplacement := mouvement_fou)
-    Tour_noir = (nom := nom_pièces[4], couleur := couleur_pièces[0], valeur := valeur_pièces[4], déplacement := mouvement_tour)
-    Dame_noir = (nom := nom_pièces[5], couleur := couleur_pièces[0], valeur := valeur_pièces[5], déplacement := mouvement_dame)
-    Roi_noir = (nom := nom_pièces[6], couleur := couleur_pièces[0], valeur := valeur_pièces[6], déplacement := mouvement_roi)
-    Pion_blanc = (nom := nom_pièces[7], couleur := couleur_pièces[1], valeur := valeur_pièces[7], déplacement := mouvement_pion)
-    Cavalier_blanc = (nom := nom_pièces[8], couleur := couleur_pièces[1], valeur := valeur_pièces[8], déplacement := mouvement_cavalier)
-    Fou_blanc = (nom := nom_pièces[9], couleur := couleur_pièces[1], valeur := valeur_pièces[9], déplacement := mouvement_fou)
-    Tour_blanc = (nom := nom_pièces[10], couleur := couleur_pièces[1], valeur := valeur_pièces[10], déplacement := mouvement_tour)
-    Dame_blanc = (nom := nom_pièces[11], couleur := couleur_pièces[1], valeur := valeur_pièces[11], déplacement := mouvement_dame)
-    Roi_blanc = (nom := nom_pièces[12], couleur := couleur_pièces[1], valeur := valeur_pièces[12], déplacement := mouvement_roi)
-    # chaque pièce a maintenat un nom et une couleur en str, une valeur et un déplacement selon les tableaus unidimensionnel
+    def is_empty(self):
+        return self.nom == self.vide # si self.nom correspond à self.vide ( si ce que l'on a rentré est " "), alors la fonction retourne True
+    
 
-
-
-    print(Roi_blanc)# test
+case_vide = pièces() # test
+print(case_vide.is_empty()) # test
