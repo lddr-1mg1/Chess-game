@@ -1,21 +1,30 @@
 import pygame
-
+# Initialize Pygame
 pygame.init()
 
 # Screen settings
 screen_width = 1000
 screen_height = screen_width
 screen = pygame.display.set_mode((screen_width, screen_height))
+square_size = screen_width // 8
 
 running = True
 
-# Show a circle in a certain point
-def display_piece(x, y, coulour):
-    pygame.draw.circle(screen, coulour, ((screen_width*x/8)-screen_width/16, screen_height*y/8 + screen_height/16), 20, 10)
+# Function to display a piece on the board
+def display_piece(x, y, image):
+    # Calculate the top-left position for the piece
+    pos_x = (x * square_size) + (square_size - image.get_width()) // 2
+    pos_y = (y * square_size) + (square_size - image.get_height()) // 2
+    screen.blit(image, (pos_x, pos_y))
 
+def draw_chessboard():
+    for row in range(8):
+        for col in range(8):
+            color = pygame.Color("#d5c9bb") if (row + col) % 2 == 0 else pygame.Color("#b2a696")
+            pygame.draw.rect(screen, color, (col * square_size, row * square_size, square_size, square_size))
 
+# Main loop
 while running:
-    # Prevents from crashing
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -23,18 +32,25 @@ while running:
     # Set background to white
     screen.fill("white")
 
-    # Show a 8x8 grid with cells 1/8 of the screen witdth
-    for i in range(0, screen_width, int(screen_width/8)):
-        pygame.draw.line(screen, "gray", (0, i), (screen_width, i))
-        pygame.draw.line(screen, "gray", (i, 0), (i, screen_width))
-    
+    # Draw the chessboard
+    draw_chessboard()
 
-    display_piece(6, 4, "red")
-    display_piece(6, 5, "blue")
+    # Load and resize the piece image
+    image = pygame.image.load("./pieces/b_bishop_png_shadow_512px.png")
+    image = pygame.transform.scale(image, (square_size, square_size))
 
-    # Display pygame window
+    image2 = pygame.image.load("./pieces/b_queen_png_shadow_512px.png")
+    image2 = pygame.transform.scale(image2, (square_size, square_size))
+
+    # Display the piece at position (6, 4)
+    display_piece(4, 6, image)
+    display_piece(2, 3, image)
+    display_piece(3, 0, image2)
+
+    # Update the display
     pygame.display.flip()
 
-    # Debugging
-    print(screen_width*3/10, screen_height*5/10, "Mouse pos: ", pygame.mouse.get_pos())
+    print(image.get_rect())
+
+# Quit Pygame
 pygame.quit()
