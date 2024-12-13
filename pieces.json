@@ -1,0 +1,261 @@
+{
+    "pieces": [
+      {
+        "type": "Rook",
+        "color": "White",
+        "position": [0, 0],
+        "value": 5,
+        "movement": "horizontal or vertical",
+        "image": "./pieces/w_rook_png_shadow_512px.png"
+      },
+      {
+        "type": "Rook",
+        "color": "White",
+        "position": [7, 0],
+        "value": 5,
+        "movement": "horizontal or vertical",
+        "image": "./pieces/w_rook_png_shadow_512px.png"
+      },
+      {
+        "type": "Knight",
+        "color": "White",
+        "position": [1, 0],
+        "value": 3,
+        "movement": "L-shape",
+        "image": "./pieces/w_knight_png_shadow_512px.png"
+      },
+      {
+        "type": "Knight",
+        "color": "White",
+        "position": [6, 0],
+        "value": 3,
+        "movement": "L-shape",
+        "image": "./pieces/w_knight_png_shadow_512px.png"
+      },
+      {
+        "type": "Bishop",
+        "color": "White",
+        "position": [2, 0],
+        "value": 3,
+        "movement": "diagonal",
+        "image": "./pieces/w_bishop_png_shadow_512px.png"
+      },
+      {
+        "type": "Bishop",
+        "color": "White",
+        "position": [5, 0],
+        "value": 3,
+        "movement": "diagonal",
+        "image": "./pieces/w_bishop_png_shadow_512px.png"
+      },
+      {
+        "type": "Queen",
+        "color": "White",
+        "position": [4, 0],
+        "value": 9,
+        "movement": "horizontal, vertical, or diagonal",
+        "image": "./pieces/w_queen_png_shadow_512px.png"
+      },
+      {
+        "type": "King",
+        "color": "White",
+        "position": [3, 0],
+        "value": "infinite",
+        "movement": "one square in any direction",
+        "image": "./pieces/w_king_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "White",
+        "position": [0, 1],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/w_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "White",
+        "position": [1, 1],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/w_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "White",
+        "position": [2, 1],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/w_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "White",
+        "position": [3, 1],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/w_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "White",
+        "position": [4, 1],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/w_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "White",
+        "position": [5, 1],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/w_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "White",
+        "position": [6, 1],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/w_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "White",
+        "position": [7, 1],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/w_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Rook",
+        "color": "Black",
+        "position": [0, 7],
+        "value": 5,
+        "movement": "horizontal or vertical",
+        "image": "./pieces/b_rook_png_shadow_512px.png"
+      },
+      {
+        "type": "Rook",
+        "color": "Black",
+        "position": [7, 7],
+        "value": 5,
+        "movement": "horizontal or vertical",
+        "image": "./pieces/b_rook_png_shadow_512px.png"
+      },
+      {
+        "type": "Knight",
+        "color": "Black",
+        "position": [1, 7],
+        "value": 3,
+        "movement": "L-shape",
+        "image": "./pieces/b_knight_png_shadow_512px.png."
+      },
+      {
+        "type": "Knight",
+        "color": "Black",
+        "position": [6, 7],
+        "value": 3,
+        "movement": "L-shape",
+        "image": "./pieces/b_knight_png_shadow_512px.png."
+      },
+      {
+        "type": "Bishop",
+        "color": "Black",
+        "position": [2, 7],
+        "value": 3,
+        "movement": "diagonal",
+        "image": "./pieces/b_bishop_png_shadow_512px.png"
+      },
+      {
+        "type": "Bishop",
+        "color": "Black",
+        "position": [5, 7],
+        "value": 3,
+        "movement": "diagonal",
+        "image": "./pieces/b_bishop_png_shadow_512px.png"
+      },
+      {
+        "type": "Queen",
+        "color": "Black",
+        "position": [4, 7],
+        "value": 9,
+        "movement": "horizontal, vertical, or diagonal",
+        "image": "./pieces/b_queen_png_shadow_512px.png"
+      },
+      {
+        "type": "King",
+        "color": "Black",
+        "position": [3, 7],
+        "value": "infinite",
+        "movement": "one square in any direction",
+        "image": "./pieces/b_king_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "Black",
+        "position": [0, 6],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/b_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "Black",
+        "position": [1, 6],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/b_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "Black",
+        "position": [2, 6],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/b_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "Black",
+        "position": [3, 6],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/b_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "Black",
+        "position": [4, 6],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/b_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "Black",
+        "position": [5, 6],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/b_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "Black",
+        "position": [6, 6],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/b_pawn_png_shadow_512px.png"
+      },
+      {
+        "type": "Pawn",
+        "color": "Black",
+        "position": [7, 6],
+        "value": 1,
+        "movement": "forward, captures diagonally",
+        "image": "./pieces/b_pawn_png_shadow_512px.png"
+      }
+    ]
+  }
+  

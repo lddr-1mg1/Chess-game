@@ -1,4 +1,12 @@
+import json
 import pygame
+
+with open("pieces.json") as f:
+    pieces = json.load(f)
+
+
+
+
 # Initialize Pygame
 pygame.init()
 
@@ -35,22 +43,22 @@ while running:
     # Draw the chessboard
     draw_chessboard()
 
-    # Load and resize the piece image
-    image = pygame.image.load("./pieces/b_bishop_png_shadow_512px.png")
-    image = pygame.transform.scale(image, (square_size, square_size))
+    
+    for piece in pieces["pieces"]:
+        image = piece["image"] # prend l'image de chaque pièce
+        image = pygame.image.load(image)
+        image = pygame.transform.scale(image, (square_size, square_size)) # redimensionne l'image
 
-    image2 = pygame.image.load("./pieces/b_queen_png_shadow_512px.png")
-    image2 = pygame.transform.scale(image2, (square_size, square_size))
+        x, y = piece["position"]# prend la position de chque pièce
 
-    # Display the piece at position (6, 4)
-    display_piece(4, 6, image)
-    display_piece(2, 3, image)
-    display_piece(3, 0, image2)
+        display_piece(x, y, image)
+    
 
     # Update the display
     pygame.display.flip()
 
-    print(image.get_rect())
+    
 
 # Quit Pygame
 pygame.quit()
+
