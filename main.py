@@ -109,11 +109,8 @@ def handle_drag_and_drop():
 
                         if ((actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y == 0)) or ((actual_position[0] - new_x == 0) and (actual_position[1] - new_y in allowed_y_moves)):
                             is_allowed = True
-                            
-                    elif piece_type == "Bishop": 
-                        print(actual_position[0] - new_x)
-                        print(actual_position[1] - new_y)
 
+                    elif piece_type == "Bishop": 
                         if abs(actual_position[0] - new_x) == abs(actual_position[1] - new_y):
                             is_allowed = True
                     else: 
