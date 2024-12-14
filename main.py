@@ -102,19 +102,38 @@ def handle_drag_and_drop():
 
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
                             is_allowed = True
-                        
+
+                    elif piece_type == "Knight":
+                        if (abs(actual_position[0] - new_x) == 2 and abs(actual_position[1] - new_y) == 1) or (abs(actual_position[0] - new_x) == 1 and abs(actual_position[1] - new_y) == 2):
+                            is_allowed = True
+
+                    elif piece_type == "Bishop": 
+                        if abs(actual_position[0] - new_x) == abs(actual_position[1] - new_y):
+                            is_allowed = True    
+
                     elif piece_type == "Rook":
                         allowed_y_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
                         allowed_x_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
 
                         if ((actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y == 0)) or ((actual_position[0] - new_x == 0) and (actual_position[1] - new_y in allowed_y_moves)):
                             is_allowed = True
+                    
+                    elif piece_type == "Queen":
+                        allowed_y_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
+                        allowed_x_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
 
-                    elif piece_type == "Bishop": 
-                        if abs(actual_position[0] - new_x) == abs(actual_position[1] - new_y):
+                        if (((actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y == 0)) or ((actual_position[0] - new_x == 0) and (actual_position[1] - new_y in allowed_y_moves))) or abs(actual_position[0] - new_x) == abs(actual_position[1] - new_y):
                             is_allowed = True
+
+                    elif piece_type == "King": 
+                        allowed_x_moves = [-1, 0, 1]
+                        allowed_y_moves = [-1, 0, 1]
+                        
+                        if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
+                            is_allowed = True
+                    
                     else: 
-                        allowed_y_moves = [1]
+                        print("This piece is unsupported")
 
 
 
