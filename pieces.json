@@ -78,7 +78,7 @@
           "color": "White",
           "position": [0, 1],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/w_pawn_png_shadow_512px.png"
       },
       {
@@ -87,7 +87,7 @@
           "color": "White",
           "position": [1, 1],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/w_pawn_png_shadow_512px.png"
       },
       {
@@ -96,7 +96,7 @@
           "color": "White",
           "position": [2, 1],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/w_pawn_png_shadow_512px.png"
       },
       {
@@ -105,7 +105,7 @@
           "color": "White",
           "position": [3, 1],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/w_pawn_png_shadow_512px.png"
       },
       {
@@ -114,7 +114,7 @@
           "color": "White",
           "position": [4, 1],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/w_pawn_png_shadow_512px.png"
       },
       {
@@ -123,7 +123,7 @@
           "color": "White",
           "position": [5, 1],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/w_pawn_png_shadow_512px.png"
       },
       {
@@ -132,7 +132,7 @@
           "color": "White",
           "position": [6, 1],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/w_pawn_png_shadow_512px.png"
       },
       {
@@ -141,7 +141,7 @@
           "color": "White",
           "position": [7, 1],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/w_pawn_png_shadow_512px.png"
       },
       {
@@ -222,7 +222,7 @@
           "color": "Black",
           "position": [0, 6],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/b_pawn_png_shadow_512px.png"
       },
       {
@@ -231,7 +231,7 @@
           "color": "Black",
           "position": [1, 6],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/b_pawn_png_shadow_512px.png"
       },
       {
@@ -240,7 +240,7 @@
           "color": "Black",
           "position": [2, 6],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/b_pawn_png_shadow_512px.png"
       },
       {
@@ -249,7 +249,7 @@
           "color": "Black",
           "position": [3, 6],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/b_pawn_png_shadow_512px.png"
       },
       {
@@ -258,7 +258,7 @@
           "color": "Black",
           "position": [4, 6],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/b_pawn_png_shadow_512px.png"
       },
       {
@@ -267,7 +267,7 @@
           "color": "Black",
           "position": [5, 6],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/b_pawn_png_shadow_512px.png"
       },
       {
@@ -276,7 +276,7 @@
           "color": "Black",
           "position": [6, 6],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/b_pawn_png_shadow_512px.png"
       },
       {
@@ -285,7 +285,7 @@
           "color": "Black",
           "position": [7, 6],
           "value": 1,
-          "movement": "forward, captures diagonally",
+          "movement": [0, 1],
           "image": "./pieces/b_pawn_png_shadow_512px.png"
       }
   ]

@@ -14,7 +14,7 @@ square_size = screen_width // 8
 primary_square_color = "#d5c9bb"
 secondary_square_color = "#b2a696"
 
-# Set screen dimensions
+#¼
 screen = pygame.display.set_mode((screen_width, screen_width))
 
 running = True
@@ -24,8 +24,9 @@ dragging_piece = None  # Currently dragged piece
 pieces_images =  {} 
 pieces_positions = {}
 
+
 for piece in pieces["pieces"]:
-        piece_id = piece["id"] # un ID différent pour chaque pièce pour eviter de reécrire par dessus 
+        piece_id = piece["id"] # un ID différent pour chaque pièce pour eviter de reécrire par dessus
         image = pygame.image.load(piece["image"]) # prend l'image de chaque pièce
         pieces_images[piece_id] = pygame.transform.scale(image, (square_size, square_size)) # redimensionne l'image
         pieces_positions[piece_id] = piece["position"] # prend la position de chaque pièce
@@ -60,8 +61,7 @@ def move_piece(piece_id, new_position): # déplace une pièce et capture une aut
                  
 
 def handle_drag_and_drop():
-    global dragging_piece
-
+    global dragging_piece, piece_id
     # Prevents from crashing
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -72,6 +72,7 @@ def handle_drag_and_drop():
             mouse_x, mouse_y = pygame.mouse.get_pos() # Get x, y cordonates of the mouse
             for piece_id, (piece_x, piece_y) in pieces_positions.items(): # Get x, y cordonates and id of the pieces
                 piece_rect = draw_piece(piece_id, piece_x, piece_y) # Draw the piece 
+
                 if piece_rect.collidepoint(mouse_x, mouse_y): # Verify if the piece collide with the mouse 
                     dragging_piece = piece_id # Set the piece as beeing dragged
                     break
@@ -82,9 +83,53 @@ def handle_drag_and_drop():
                 mouse_x, mouse_y = pygame.mouse.get_pos() # Get x, y cordonates of the mouse 
                 new_x, new_y = mouse_x // square_size, mouse_y // square_size  # Snap the piece to the nearest square
                 if 0 <= new_x < 8 and 0 <= new_y < 8: # Chessboard limit
-                    pieces_positions[dragging_piece] = [new_x, new_y] # Set new piece position 
-                    move_piece(dragging_piece, [new_x, new_y]) # Move the piece
-                    dragging_piece = None # No piece is beeing dragged
+                    
+                    actual_position = pieces_positions[dragging_piece]
+
+                    piece_settings = next(piece for piece in pieces["pieces"] if piece["id"] == dragging_piece)
+                
+                    piece_type = piece_settings["type"]
+                    initial_position = piece_settings["position"]
+
+                    is_allowed = False
+                            
+                    if piece_type == "Pawn":
+                        allowed_x_moves = [0]
+                        if actual_position == initial_position:
+                            allowed_y_moves = [1, 2]
+                        else:
+                            allowed_y_moves = [1]
+
+                        if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
+                            is_allowed = True
+                        
+                    elif piece_type == "Rook":
+                        allowed_y_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
+                        allowed_x_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
+
+                        if ((actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y == 0)) or ((actual_position[0] - new_x == 0) and (actual_position[1] - new_y in allowed_y_moves)):
+                            is_allowed = True
+                            
+                    elif piece_type == "Bishop": 
+                        print(actual_position[0] - new_x)
+                        print(actual_position[1] - new_y)
+
+                        if abs(actual_position[0] - new_x) == abs(actual_position[1] - new_y):
+                            is_allowed = True
+                    else: 
+                        allowed_y_moves = [1]
+
+
+
+                    if is_allowed:
+                        pieces_positions[dragging_piece] = [new_x, new_y]
+                        move_piece(dragging_piece, [new_x, new_y])
+                        dragging_piece = None
+
+
+                    else:
+                        dragging_piece = None 
+                        print("Movement in not allowed")
                 else:
                     print("Invalid movement") 
 
@@ -112,3 +157,5 @@ while running:
 
 # Quit Pygame
 pygame.quit()
+
+
