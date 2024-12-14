@@ -41,6 +41,17 @@ def draw_piece(piece_name, x, y):
     screen.blit(image, (pos_x, pos_y))
     return rect
 
+def move_piece(piece_id, new_position): # déplace une pièce et capture une autre si necessaire
+    global pieces_positions #Accède à la variable globale pieces_positions qui contient les positions actuelles de toutes les pièces
+    
+    for target_id, target_pos in pieces_positions.items(): # parcourt toutes les pièces du jeu
+        if target_pos == new_position and target_id != piece_id: #si la position de la cible est la même que la nouvelle position de la pièce jouée et qu'elles ne sont pas les mêmes  
+            del pieces_positions[target_id] # capture
+            break # arrête la bouvle dès qu'une pièce est mangée
+
+    pieces_positions[piece_id] = new_position # met à jour la position
+                 
+
 def handle_drag_and_drop():
     global dragging_piece
 
@@ -51,10 +62,10 @@ def handle_drag_and_drop():
         # Detect mouse button down to start dragging
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left button
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            for piece_name, (piece_x, piece_y) in pieces_positions.items():
-                piece_rect = draw_piece(piece_name, piece_x, piece_y)
+            for piece_id, (piece_x, piece_y) in pieces_positions.items():
+                piece_rect = draw_piece(piece_id, piece_x, piece_y)
                 if piece_rect.collidepoint(mouse_x, mouse_y):
-                    dragging_piece = piece_name
+                    dragging_piece = piece_id
                     break
 
         # Detect mouse button up to drop the piece
@@ -63,8 +74,12 @@ def handle_drag_and_drop():
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 # Snap the piece to the nearest square
                 new_x, new_y = mouse_x // square_size, mouse_y // square_size
-                pieces_positions[dragging_piece] = [new_x, new_y]
-                dragging_piece = None
+                if 0 <= new_x < 8 and 0 <= new_y < 8: # limite de l'echiquié
+                    pieces_positions[dragging_piece] = [new_x, new_y]
+                    move_piece(dragging_piece, [new_x, new_y]) # appelle la fonction move_piece pour les captures
+                    dragging_piece = None
+                else:
+                    print("mouvement invalide")
 
     return True
 
