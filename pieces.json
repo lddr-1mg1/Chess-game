@@ -169,7 +169,7 @@
           "position": [1, 7],
           "value": 3,
           "movement": "L-shape",
-          "image": "./pieces/b_knight_png_shadow_512px.png."
+          "image": "./pieces/b_knight_png_shadow_512px.png"
       },
       {
           "id": 20,
@@ -178,7 +178,7 @@
           "position": [6, 7],
           "value": 3,
           "movement": "L-shape",
-          "image": "./pieces/b_knight_png_shadow_512px.png."
+          "image": "./pieces/b_knight_png_shadow_512px.png"
       },
       {
           "id": 21,
