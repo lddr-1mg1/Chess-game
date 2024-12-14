@@ -55,6 +55,9 @@ def move_piece(piece_id, new_position): # déplace une pièce et capture une aut
     for target_id, target_pos in pieces_positions.items(): # parcourt toutes les pièces du jeu
         if target_pos == new_position and target_id != piece_id: #si la position de la cible est la même que la nouvelle position de la pièce jouée et qu'elles ne sont pas les mêmes  
             del pieces_positions[target_id] # capture
+            if next(piece["type"] for piece in pieces["pieces"] if piece["id"] == dragging_piece) == "King":
+                print("LOST !!!!!!")
+                pygame.quit()
             break # arrête la bouvle dès qu'une pièce est mangée
 
     pieces_positions[piece_id] = new_position # met à jour la position
