@@ -230,7 +230,7 @@
           "type": "Black_Pawn",
           "color": "Black",
           "position": [1, 6],
-          "value": 1,
+          "value": 1    ,
           "movement": [0, 1],
           "image": "./pieces/b_pawn_png_shadow_512px.png"
       },

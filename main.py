@@ -23,10 +23,11 @@ dragging_piece = None  # Currently dragged piece
 # Dictionaries for images and starting positions
 pieces_images =  {} 
 pieces_positions = {}
-
+pieces_color = {}
 
 for piece in pieces["pieces"]:
         piece_id = piece["id"] # un ID différent pour chaque pièce pour eviter de reécrire par dessus
+        pieces_color[piece_id] = piece["color"]
         image = pygame.image.load(piece["image"]) # prend l'image de chaque pièce
         pieces_images[piece_id] = pygame.transform.scale(image, (square_size, square_size)) # redimensionne l'image
         pieces_positions[piece_id] = piece["position"] # prend la position de chaque pièce
@@ -70,19 +71,16 @@ def move_piece(piece_id, new_position): # déplace une pièce et capture une aut
     for target_id, target_pos in pieces_positions.items(): # parcourt toutes les pièces du jeu
         current_color = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == dragging_piece)
         target_color = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == target_id)
-        
+    
         if target_pos == new_position and target_id != piece_id and current_color != target_color: #si la position de la cible est la même que la nouvelle position de la pièce jouée et qu'elles ne sont pas les mêmes  
             del pieces_positions[target_id] # capture
-            if next(piece["type"] for piece in pieces["pieces"] if piece["id"] == dragging_piece) == "King":
-                print(f"The {target_color} have lost !")
-                pygame.quit()
             break # arrête la bouvle dès qu'une pièce est mangée
 
     pieces_positions[piece_id] = new_position # met à jour la position
                  
 
 def handle_drag_and_drop():
-    global dragging_piece, piece_id
+    global dragging_piece, piece_id, pieces_color
     # Prevents from crashing
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -167,7 +165,13 @@ def handle_drag_and_drop():
                     else: 
                         print("This piece is unsupported")
 
+                    piece_color = next(piece for piece in pieces["pieces"] if piece["color"] == dragging_piece)
 
+                    print("Piece color :", piece_color, "All colors", pieces_color)
+
+                    for position in pieces_positions:
+                        if [new_x, new_y] == pieces_positions[position]:
+                            is_allowed = False
 
                     if is_allowed:
                         pieces_positions[dragging_piece] = [new_x, new_y]
