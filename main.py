@@ -53,23 +53,80 @@ def draw_piece(piece_name, x, y):
     screen.blit(image, (pos_x, pos_y))
     return rect
 
-def promote_piece(piece_id):
-    actual_position = pieces_positions[piece_id]
-    options = ["Queen", "Bishop", "Rook", "knight"]
-    choice = input(f"Choisisez une pieces parmi les options: {options}")
+def promote_piece(piece_id, piece_color):
+    print(f"Promoting {piece_id} as {piece_color}")#test
+    
+    
+    if piece_color == "White":
+        options = ["w_queen", "w_bishop", "w_rook", "w_knight"] 
+    elif piece_color == "Black":
+        options = ["b_queen", "b_bishop", "b_rook", "b_knight"]
+        print(options)# test
+    
+    choice = None
+
+    # afficher le soptions de promotions
+    running = True
+    while running is True:
+        for event in pygame.event.get(): # parcourt tous les éléments générés par pygame
+            if event.type == pygame.QUIT: # vérifie si l'utilisateur a cliqué pour fermer la fenetre
+                pygame.quit()
+                exit()
+            
+            # gestion des clics
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: # vérifie si un clic gauche a été fait.
+                mouse_x, mouse_y = pygame.mouse.get_pos() # Get x, y cordonates of the mouse
+                for i, option in enumerate(options): # Parcourt les options de promotion pour dessiner leurs boutons.
+                    button_rect = pygame.Rect(150 + i * 200, 300, 150, 100 ) # position x, positon y, taille
+                    if button_rect.collidepoint(mouse_x, mouse_y):
+                        choice = option # enregistre le choix 
+                        running = False # sortir de la boucle après un choix
+
+        screen.fill("#000000") # remplit l'ecran de noir
+
+        # Afficher le message
+        font = pygame.font.Font(None, 36) # crée une police d'ecriture de 36
+        message = font.render("choisissez une pièce", True,  pygame.Color("#FFFFFF")) # affiche le message en blanc #True rend le texte plus lisse
+        screen.blit(message, (150, 200)) # position du message
+
+        for i, option in enumerate(options):
+            button_rect = pygame.Rect(150 + i * 200, 300, 150, 100)
+            pygame.draw.rect(screen, pygame.Color("#808080"), button_rect) # dessine un carré gris
+
+            # affiche le texte de chaque bouton
+            option_text = font.render(option, True, pygame.Color("#000000")) #True rend le text plus lisse
+            text_rect = option_text.get_rect(center=button_rect.center) # place le texte au centre du bouton
+            screen.blit(option_text, text_rect) #place le message au dessus
+
+        pygame.display.flip()
+
+
+    # mettre à jours l'image et le type de la pièce prommue
     for piece in pieces["pieces"]:
         if piece["id"] == piece_id:
             piece["type"] = f"{choice}"
-            new_image = draw_piece(choice, actual_position[0], actual_position[1])
+            new_image = f"./pieces/{choice}_png_shadow_512px.png"
+            print(new_image) # test
             image = pygame.image.load(new_image)
             pieces_images[piece_id] = pygame.transform.scale(image, (square_size, square_size))
+            break
+
+    draw_chessboard() #reaffiche l'echiqier
+
+    for piece_name, (piece_x, piece_y) in pieces_positions.items():
+        draw_piece(piece_name, piece_x, piece_y) # redessine chaque pièce à sa position
+
+    pygame.display.flip() # reaffiche les changement à l'ecran
 
 
-def check_promotion(piece_id, new_position):
-    global pieces_positions, piece
-    piece = next(piece for piece in pieces["pieces"] if piece["id"] == piece_id)
-    if piece["type"] == "White_Pawn" and new_position == 7 or piece["type"] == "Black_Pawn" and new_position == 0:
-        promote_piece(piece_id)
+        
+def check_promotion(piece_type, piece_position, piece_id):
+    if piece_type == "White_Pawn" and piece_position[1] == 7:
+        promote_piece(piece_id, "White")
+    elif piece_type == "Black_Pawn" and piece_position[1] == 0:
+        promote_piece(piece_id, "Black")
+        print(piece_id)
+
 
 def move_piece(piece_id, new_position): # déplace une pièce et capture une autre si necessaire
     global pieces_positions #Accède à la variable globale pieces_positions qui contient les positions actuelles de toutes les pièces
@@ -153,15 +210,15 @@ def handle_drag_and_drop():
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
                             is_allowed = True
                     
-                    elif piece_type == "Knight":
+                    elif piece_type == "w_knight" or piece_type == "b_knight":
                         if (abs(actual_position[0] - new_x) == 2 and abs(actual_position[1] - new_y) == 1) or (abs(actual_position[0] - new_x) == 1 and abs(actual_position[1] - new_y) == 2):
                             is_allowed = True
 
-                    elif piece_type == "Bishop": 
+                    elif piece_type == "w_bishop" or piece_type == "b_bishop": 
                         if abs(actual_position[0] - new_x) == abs(actual_position[1] - new_y):
                             is_allowed = True    
 
-                    elif piece_type == "Rook":
+                    elif piece_type == "w_rook" or piece_type == "b_rook":
                         allowed_y_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
                         allowed_x_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
 
@@ -169,7 +226,7 @@ def handle_drag_and_drop():
                             is_allowed = True
 
                     
-                    elif piece_type == "Queen":
+                    elif piece_type == "w_queen" or piece_type == "b-queen":
                         allowed_y_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
                         allowed_x_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
 
@@ -198,20 +255,27 @@ def handle_drag_and_drop():
                         if [new_x, new_y] == pieces_positions[position] and piece_owner == pieces_color[position]:
                             is_allowed = False # Prevents from catching self color
                         
-                    check_promotion(dragging_piece, new_y)
                     
                     if is_allowed:
                         pieces_positions[dragging_piece] = [new_x, new_y]
                         move_piece(dragging_piece, [new_x, new_y])
+                        print(piece_type)# test
+                        print(pieces_positions[dragging_piece])# test
+                        print(dragging_piece)# test
+                        check_promotion(piece_type, pieces_positions[dragging_piece], dragging_piece)
                         dragging_piece = None
                         move_made = True
-
+                           
+                    
                     else:
                         dragging_piece = None 
                         print("Movement in not allowed")
 
+                    
                     if move_made:
                         current_player = "Black" if current_player == "White" else "White"   
+                             
+                
                 else:
                     print("Invalid movement") 
 

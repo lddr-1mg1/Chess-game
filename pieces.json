@@ -2,7 +2,7 @@
   "pieces": [
       {
           "id": 1,
-          "type": "Rook",
+          "type": "w_rook",
           "color": "White",
           "position": [0, 0],
           "value": 5,
@@ -11,7 +11,7 @@
       },
       {
           "id": 2,
-          "type": "Rook",
+          "type": "w_rook",
           "color": "White",
           "position": [7, 0],
           "value": 5,
@@ -20,7 +20,7 @@
       },
       {
           "id": 3,
-          "type": "Knight",
+          "type": "w_knight",
           "color": "White",
           "position": [1, 0],
           "value": 3,
@@ -29,7 +29,7 @@
       },
       {
           "id": 4,
-          "type": "Knight",
+          "type": "w_knight",
           "color": "White",
           "position": [6, 0],
           "value": 3,
@@ -38,7 +38,7 @@
       },
       {
           "id": 5,
-          "type": "Bishop",
+          "type": "w_bishop",
           "color": "White",
           "position": [2, 0],
           "value": 3,
@@ -47,7 +47,7 @@
       },
       {
           "id": 6,
-          "type": "Bishop",
+          "type": "w_bishop",
           "color": "White",
           "position": [5, 0],
           "value": 3,
@@ -56,7 +56,7 @@
       },
       {
           "id": 7,
-          "type": "Queen",
+          "type": "w_queen",
           "color": "White",
           "position": [4, 0],
           "value": 9,
@@ -146,7 +146,7 @@
       },
       {
           "id": 17,
-          "type": "Rook",
+          "type": "b_rook",
           "color": "Black",
           "position": [0, 7],
           "value": 5,
@@ -155,7 +155,7 @@
       },
       {
           "id": 18,
-          "type": "Rook",
+          "type": "b_rook",
           "color": "Black",
           "position": [7, 7],
           "value": 5,
@@ -164,7 +164,7 @@
       },
       {
           "id": 19,
-          "type": "Knight",
+          "type": "b_knight",
           "color": "Black",
           "position": [1, 7],
           "value": 3,
@@ -173,7 +173,7 @@
       },
       {
           "id": 20,
-          "type": "Knight",
+          "type": "b_knight",
           "color": "Black",
           "position": [6, 7],
           "value": 3,
@@ -182,7 +182,7 @@
       },
       {
           "id": 21,
-          "type": "Bishop",
+          "type": "b_bishop",
           "color": "Black",
           "position": [2, 7],
           "value": 3,
@@ -191,7 +191,7 @@
       },
       {
           "id": 22,
-          "type": "Bishop",
+          "type": "b_bishop",
           "color": "Black",
           "position": [5, 7],
           "value": 3,
@@ -200,7 +200,7 @@
       },
       {
           "id": 23,
-          "type": "Queen",
+          "type": "b_queen",
           "color": "Black",
           "position": [4, 7],
           "value": 9,
