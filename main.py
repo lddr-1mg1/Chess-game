@@ -174,7 +174,7 @@ def handle_drag_and_drop():
                         print("This piece is unsupported")
 
                     if piece_owner != current_player:
-                        is_allowed = False 
+                        is_allowed = False # empèche de jouer si ce n'est pas son tour
                         
                     if is_allowed:
                         pieces_positions[dragging_piece] = [new_x, new_y]
