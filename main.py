@@ -168,9 +168,6 @@ def handle_drag_and_drop():
                         
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
                             is_allowed = True
-                    
-                    else: 
-                        print("This piece is unsupported")
 
                     if piece_owner != current_player:
                         is_allowed = False 
