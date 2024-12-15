@@ -25,7 +25,7 @@ dragging_piece = None  # Currently dragged piece
 pieces_images =  {} 
 pieces_positions = {}
 pieces_color = {}
-pieces_color = {}
+
 
 for piece in pieces["pieces"]:
         piece_id = piece["id"] # un ID différent pour chaque pièce pour eviter de reécrire par dessus
@@ -33,7 +33,6 @@ for piece in pieces["pieces"]:
         image = pygame.image.load(piece["image"]) # prend l'image de chaque pièce
         pieces_images[piece_id] = pygame.transform.scale(image, (square_size, square_size)) # redimensionne l'image
         pieces_positions[piece_id] = piece["position"] # prend la position de chaque pièce
-        pieces_color[piece_id] = piece["color"]
 
 # Draw a chess grid by coloring every other square. 
 def draw_chessboard():
@@ -112,8 +111,6 @@ def handle_drag_and_drop():
                     piece_settings = next(piece for piece in pieces["pieces"] if piece["id"] == dragging_piece)
                     piece_owner = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == dragging_piece)
                     
-                    
-                
                     piece_type = piece_settings["type"]
                     initial_position = piece_settings["position"]
 
@@ -171,8 +168,11 @@ def handle_drag_and_drop():
 
                     if piece_owner != current_player:
                         is_allowed = False 
+                    
+                    print(piece_owner)
+
                     for position in pieces_positions:
-                        if [new_x, new_y] == pieces_positions[position]:
+                        if [new_x, new_y] == pieces_positions[position] and piece_owner == pieces_color[position]:
                             is_allowed = False
                         
                     if is_allowed:
