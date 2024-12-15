@@ -54,22 +54,43 @@ def draw_piece(piece_name, x, y):
     return rect
 
 def promote_piece(piece_id):
-    actual_position = pieces_positions[piece_id]
-    options = ["Queen", "Bishop", "Rook", "knight"]
-    choice = input(f"Choisisez une pieces parmi les options: {options}")
+    global pieces, pieces_images
+
+    # Liste des choix possibles pour la promotion
+    promotion_choices = {
+        "Queen": "/pieces/b_queen_png_shadow_512px.png",
+        "Rook": "./pieces/b_rook_png_shadow_512px.png",
+        "Bishop": "./pieces/b_bishop_png_shadow_512px.png",
+        "Knight": "./pieces/b_knight_png_shadow_512px.png",
+    }
+
+    # Affiche une interface ou demande une entrée utilisateur
+    print("Promote your pawn! Choose one: Queen, Rook, Bishop, Knight")
+    new_type = None
+    while new_type not in promotion_choices:
+        new_type = input("Enter your choice: ").capitalize()
+
+    # Met à jour les informations de la pièce
     for piece in pieces["pieces"]:
         if piece["id"] == piece_id:
-            piece["type"] = f"{choice}"
-            new_image = draw_piece(choice, actual_position[0], actual_position[1])
-            image = pygame.image.load(new_image)
-            pieces_images[piece_id] = pygame.transform.scale(image, (square_size, square_size))
+            piece["type"] = new_type
+            piece["image"] = promotion_choices[new_type]
+            pieces_images[piece_id] = pygame.transform.scale(
+                pygame.image.load(piece["image"]),
+                (square_size, square_size)
+            )
+            break
 
 
 def check_promotion(piece_id, new_position):
-    global pieces_positions, piece
+    global pieces_positions, pieces
+
     piece = next(piece for piece in pieces["pieces"] if piece["id"] == piece_id)
-    if piece["type"] == "White_Pawn" and new_position == 7 or piece["type"] == "Black_Pawn" and new_position == 0:
-        promote_piece(piece_id)
+
+    if (piece["type"] == "White_Pawn" and new_position[1] == 0) or (piece["type"] == "Black_Pawn" and new_position[1] == 7):
+        promote_piece(piece_id) 
+
+
 
 def move_piece(piece_id, new_position): # déplace une pièce et capture une autre si necessaire
     global pieces_positions #Accède à la variable globale pieces_positions qui contient les positions actuelles de toutes les pièces
@@ -85,18 +106,19 @@ def move_piece(piece_id, new_position): # déplace une pièce et capture une aut
     pieces_positions[piece_id] = new_position # met à jour la position
 
 def is_path_clear(start, end, direction):
-    current_x, current_y = start
-    target_x, target_y = end
-    dx, dy = direction
+    pass
+    # current_x, current_y = start
+    # target_x, target_y = end
+    # dx, dy = direction
     
-    print("Current_y : ", current_y, "dy :", dy)
+    # print("Current_y : ", current_y, "dy :", dy)
 
-    for position in pieces_positions: 
-        print(pieces_positions[position][1])
-        if current_y + dy not in [pieces_positions[position]]:
-            print("La case est vide")
-        else:
-            print("La case n'est pas vide")
+    # for position in pieces_positions: 
+    #     print(pieces_positions[position][1])
+    #     if current_y + dy not in [pieces_positions[position]]:
+    #         print("La case est vide")
+    #     else:
+    #         print("La case n'est pas vide")
 
 def handle_drag_and_drop():
     global dragging_piece, piece_id, pieces_color, current_player
@@ -189,22 +211,24 @@ def handle_drag_and_drop():
 
                     ############## TEST ZONE ###############
 
-                    print(is_path_clear(actual_position, [new_x, new_y], (0, 1)))
+                    # print(is_path_clear(actual_position, [new_x, new_y], (0, 1)))
 
 
                     ########################################
 
+                    check_promotion(dragging_piece, [new_x, new_y]) 
+
                     for position in pieces_positions:
                         if [new_x, new_y] == pieces_positions[position] and piece_owner == pieces_color[position]:
                             is_allowed = False # Prevents from catching self color
-                        
-                    check_promotion(dragging_piece, new_y)
-                    
+                   
                     if is_allowed:
                         pieces_positions[dragging_piece] = [new_x, new_y]
                         move_piece(dragging_piece, [new_x, new_y])
                         dragging_piece = None
                         move_made = True
+
+
 
                     else:
                         dragging_piece = None 
