@@ -52,21 +52,6 @@ def draw_piece(piece_name, x, y):
     screen.blit(image, (pos_x, pos_y))
     return rect
 
-# def is_path_clear(start, end, direction):
-#     current_x, current_y = start
-#     target_x, target_y = end
-#     dx, dy = direction
-    
-#     print("Current x, y : ", current_x, current_y, "Target x, y : ", target_x, target_y, "dx, dy : ", dx, dy)
-
-#     while (current_x != target_x and current_y != target_y):
-#         current_x += dx
-#         current_y += dy
-#         if [current_x, current_y] in pieces_positions.values(): # colision détectée
-#             return False
-#     return True
-
-
 def move_piece(piece_id, new_position): # déplace une pièce et capture une autre si necessaire
     global pieces_positions #Accède à la variable globale pieces_positions qui contient les positions actuelles de toutes les pièces
     
