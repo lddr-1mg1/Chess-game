@@ -14,7 +14,6 @@ square_size = screen_width // 8
 primary_square_color = "#d5c9bb"
 secondary_square_color = "#b2a696"
 
-#¼
 screen = pygame.display.set_mode((screen_width, screen_width))
  
 current_player = "White" # white start
@@ -22,17 +21,18 @@ running = True
 dragging_piece = None  # Currently dragged piece
 
 # Dictionaries for images and starting positions
-pieces_images =  {} 
-pieces_positions = {}
-pieces_color = {}
 
+pieces_color = {}
+pieces_positions = {}
+pieces_images =  {} 
 
 for piece in pieces["pieces"]:
         piece_id = piece["id"] # un ID différent pour chaque pièce pour eviter de reécrire par dessus
         pieces_color[piece_id] = piece["color"]
+        pieces_positions[piece_id] = piece["position"] # prend la position de chaque pièce
         image = pygame.image.load(piece["image"]) # prend l'image de chaque pièce
         pieces_images[piece_id] = pygame.transform.scale(image, (square_size, square_size)) # redimensionne l'image
-        pieces_positions[piece_id] = piece["position"] # prend la position de chaque pièce
+
 
 # Draw a chess grid by coloring every other square. 
 def draw_chessboard():
@@ -64,7 +64,20 @@ def move_piece(piece_id, new_position): # déplace une pièce et capture une aut
             break # arrête la bouvle dès qu'une pièce est mangée
 
     pieces_positions[piece_id] = new_position # met à jour la position
-                 
+
+def is_path_clear(start, end, direction):
+    current_x, current_y = start
+    target_x, target_y = end
+    dx, dy = direction
+    
+    print("Current_y : ", current_y, "dy :", dy)
+
+    for position in pieces_positions: 
+        print(pieces_positions[position][1])
+        if current_y + dy not in [pieces_positions[position]]:
+            print("La case est vide")
+        else:
+            print("La case n'est pas vide")
 
 def handle_drag_and_drop():
     global dragging_piece, piece_id, pieces_color, current_player
@@ -152,13 +165,19 @@ def handle_drag_and_drop():
                             is_allowed = True
 
                     if piece_owner != current_player:
-                        is_allowed = False 
+                        is_allowed = False # Prevents from playing to times 
                     
-                    print(piece_owner)
+
+                    ############## TEST ZONE ###############
+
+                    print(is_path_clear(actual_position, [new_x, new_y], (0, 1)))
+
+
+                    ########################################
 
                     for position in pieces_positions:
                         if [new_x, new_y] == pieces_positions[position] and piece_owner == pieces_color[position]:
-                            is_allowed = False# empèche de jouer si ce n'est pas son tour
+                            is_allowed = False # Prevents from catching self color
                         
                     if is_allowed:
                         pieces_positions[dragging_piece] = [new_x, new_y]
