@@ -26,12 +26,13 @@ pieces_images =  {}
 pieces_positions = {}
 pieces_color = {}
 
+
 for piece in pieces["pieces"]:
         piece_id = piece["id"] # un ID différent pour chaque pièce pour eviter de reécrire par dessus
+        pieces_color[piece_id] = piece["color"]
         image = pygame.image.load(piece["image"]) # prend l'image de chaque pièce
         pieces_images[piece_id] = pygame.transform.scale(image, (square_size, square_size)) # redimensionne l'image
         pieces_positions[piece_id] = piece["position"] # prend la position de chaque pièce
-        pieces_color[piece_id] = piece["color"]
 
 # Draw a chess grid by coloring every other square. 
 def draw_chessboard():
@@ -51,40 +52,22 @@ def draw_piece(piece_name, x, y):
     screen.blit(image, (pos_x, pos_y))
     return rect
 
-# def is_path_clear(start, end, direction):
-#     current_x, current_y = start
-#     target_x, target_y = end
-#     dx, dy = direction
-    
-#     print("Current x, y : ", current_x, current_y, "Target x, y : ", target_x, target_y, "dx, dy : ", dx, dy)
-
-#     while (current_x != target_x and current_y != target_y):
-#         current_x += dx
-#         current_y += dy
-#         if [current_x, current_y] in pieces_positions.values(): # colision détectée
-#             return False
-#     return True
-
-
 def move_piece(piece_id, new_position): # déplace une pièce et capture une autre si necessaire
     global pieces_positions #Accède à la variable globale pieces_positions qui contient les positions actuelles de toutes les pièces
     
     for target_id, target_pos in pieces_positions.items(): # parcourt toutes les pièces du jeu
         current_color = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == dragging_piece)
         target_color = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == target_id)
-        
+    
         if target_pos == new_position and target_id != piece_id and current_color != target_color: #si la position de la cible est la même que la nouvelle position de la pièce jouée et qu'elles ne sont pas les mêmes  
             del pieces_positions[target_id] # capture
-            if next(piece["type"] for piece in pieces["pieces"] if piece["id"] == dragging_piece) == "King":
-                print(f"The {target_color} have lost !")
-                pygame.quit()
             break # arrête la bouvle dès qu'une pièce est mangée
 
     pieces_positions[piece_id] = new_position # met à jour la position
                  
 
 def handle_drag_and_drop():
-    global dragging_piece, piece_id, current_player
+    global dragging_piece, piece_id, pieces_color, current_player
     # Prevents from crashing
     move_made = False
     for event in pygame.event.get():
@@ -113,8 +96,6 @@ def handle_drag_and_drop():
                     piece_settings = next(piece for piece in pieces["pieces"] if piece["id"] == dragging_piece)
                     piece_owner = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == dragging_piece)
                     
-                    
-                
                     piece_type = piece_settings["type"]
                     initial_position = piece_settings["position"]
 
@@ -169,12 +150,15 @@ def handle_drag_and_drop():
                         
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
                             is_allowed = True
-                    
-                    else: 
-                        print("This piece is unsupported")
 
                     if piece_owner != current_player:
-                        is_allowed = False # empèche de jouer si ce n'est pas son tour
+                        is_allowed = False 
+                    
+                    print(piece_owner)
+
+                    for position in pieces_positions:
+                        if [new_x, new_y] == pieces_positions[position] and piece_owner == pieces_color[position]:
+                            is_allowed = False# empèche de jouer si ce n'est pas son tour
                         
                     if is_allowed:
                         pieces_positions[dragging_piece] = [new_x, new_y]
