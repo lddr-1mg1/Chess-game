@@ -49,27 +49,32 @@ def draw_piece(piece_name, x, y):
     screen.blit(image, (pos_x, pos_y))
     return rect
 
-def is_path_clear(start, end, direction):
-    current_x, current_y = start
-    target_x, target_y = end
-    dx, dy = direction
+# def is_path_clear(start, end, direction):
+#     current_x, current_y = start
+#     target_x, target_y = end
+#     dx, dy = direction
     
-    while (current_x != target_x and current_y != target_y):
-        current_x += dx
-        current_y += dy
-        if [current_x, current_y] in pieces_positions.values(): # colision détectée
-            return False
-    return True
+#     print("Current x, y : ", current_x, current_y, "Target x, y : ", target_x, target_y, "dx, dy : ", dx, dy)
+
+#     while (current_x != target_x and current_y != target_y):
+#         current_x += dx
+#         current_y += dy
+#         if [current_x, current_y] in pieces_positions.values(): # colision détectée
+#             return False
+#     return True
 
 
 def move_piece(piece_id, new_position): # déplace une pièce et capture une autre si necessaire
     global pieces_positions #Accède à la variable globale pieces_positions qui contient les positions actuelles de toutes les pièces
     
     for target_id, target_pos in pieces_positions.items(): # parcourt toutes les pièces du jeu
-        if target_pos == new_position and target_id != piece_id: #si la position de la cible est la même que la nouvelle position de la pièce jouée et qu'elles ne sont pas les mêmes  
+        current_color = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == dragging_piece)
+        target_color = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == target_id)
+        
+        if target_pos == new_position and target_id != piece_id and current_color != target_color: #si la position de la cible est la même que la nouvelle position de la pièce jouée et qu'elles ne sont pas les mêmes  
             del pieces_positions[target_id] # capture
             if next(piece["type"] for piece in pieces["pieces"] if piece["id"] == dragging_piece) == "King":
-                print("LOST !!!!!!")
+                print(f"The {target_color} have lost !")
                 pygame.quit()
             break # arrête la bouvle dès qu'une pièce est mangée
 
@@ -117,8 +122,7 @@ def handle_drag_and_drop():
                             allowed_y_moves = [1]
 
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
-                            if is_path_clear(actual_position, [new_x, new_y], (0, 1)):
-                                is_allowed = True
+                            is_allowed = True
 
                     if piece_type == "White_Pawn":
                         allowed_x_moves = [0]
@@ -128,8 +132,7 @@ def handle_drag_and_drop():
                             allowed_y_moves = [-1]
 
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
-                            if is_path_clear(actual_position, [new_x, new_y], (0, 1)):
-                                is_allowed = True
+                            is_allowed = True
                     
                     elif piece_type == "Knight":
                         if (abs(actual_position[0] - new_x) == 2 and abs(actual_position[1] - new_y) == 1) or (abs(actual_position[0] - new_x) == 1 and abs(actual_position[1] - new_y) == 2):
@@ -137,18 +140,15 @@ def handle_drag_and_drop():
 
                     elif piece_type == "Bishop": 
                         if abs(actual_position[0] - new_x) == abs(actual_position[1] - new_y):
-                            if is_path_clear(actual_position, [new_x, new_y], (1, 1) if new_x > actual_position[0] else (-1, -1)):
-                                is_allowed = True    
+                            is_allowed = True    
 
                     elif piece_type == "Rook":
                         allowed_y_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
                         allowed_x_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
 
                         if ((actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y == 0)) or ((actual_position[0] - new_x == 0) and (actual_position[1] - new_y in allowed_y_moves)):
-                            if is_path_clear(actual_position, [new_x, new_y], (0, 1) if new_y > actual_position[1] else (0, -1)):
-                                is_allowed = True
-                            if is_path_clear(actual_position, [new_x, new_y], (1, 0) if new_x > actual_position[0] else (-1, 0)):
-                                is_allowed = True
+                            is_allowed = True
+
                     
                     elif piece_type == "Queen":
                         allowed_y_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
@@ -173,7 +173,6 @@ def handle_drag_and_drop():
                         pieces_positions[dragging_piece] = [new_x, new_y]
                         move_piece(dragging_piece, [new_x, new_y])
                         dragging_piece = None
-
 
                     else:
                         dragging_piece = None 
