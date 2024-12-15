@@ -49,6 +49,19 @@ def draw_piece(piece_name, x, y):
     screen.blit(image, (pos_x, pos_y))
     return rect
 
+def is_path_clear(start, end, direction):
+    current_x, current_y = start
+    target_x, target_y = end
+    dx, dy = direction
+    
+    while (current_x != target_x and current_y != target_y):
+        current_x += dx
+        current_y += dy
+        if [current_x, current_y] in pieces_positions.values(): # colision détectée
+            return False
+    return True
+
+
 def move_piece(piece_id, new_position): # déplace une pièce et capture une autre si necessaire
     global pieces_positions #Accède à la variable globale pieces_positions qui contient les positions actuelles de toutes les pièces
     
@@ -96,7 +109,7 @@ def handle_drag_and_drop():
 
                     is_allowed = False
                             
-                    if piece_type == "Pawn":
+                    if piece_type == "Black_Pawn":
                         allowed_x_moves = [0]
                         if actual_position == initial_position:
                             allowed_y_moves = [1, 2]
@@ -104,22 +117,38 @@ def handle_drag_and_drop():
                             allowed_y_moves = [1]
 
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
-                            is_allowed = True
+                            if is_path_clear(actual_position, [new_x, new_y], (0, 1)):
+                                is_allowed = True
 
+                    if piece_type == "White_Pawn":
+                        allowed_x_moves = [0]
+                        if actual_position == initial_position:
+                            allowed_y_moves = [-1, -2]
+                        else:
+                            allowed_y_moves = [-1]
+
+                        if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
+                            if is_path_clear(actual_position, [new_x, new_y], (0, 1)):
+                                is_allowed = True
+                    
                     elif piece_type == "Knight":
                         if (abs(actual_position[0] - new_x) == 2 and abs(actual_position[1] - new_y) == 1) or (abs(actual_position[0] - new_x) == 1 and abs(actual_position[1] - new_y) == 2):
                             is_allowed = True
 
                     elif piece_type == "Bishop": 
                         if abs(actual_position[0] - new_x) == abs(actual_position[1] - new_y):
-                            is_allowed = True    
+                            if is_path_clear(actual_position, [new_x, new_y], (1, 1) if new_x > actual_position[0] else (-1, -1)):
+                                is_allowed = True    
 
                     elif piece_type == "Rook":
                         allowed_y_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
                         allowed_x_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
 
                         if ((actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y == 0)) or ((actual_position[0] - new_x == 0) and (actual_position[1] - new_y in allowed_y_moves)):
-                            is_allowed = True
+                            if is_path_clear(actual_position, [new_x, new_y], (0, 1) if new_y > actual_position[1] else (0, -1)):
+                                is_allowed = True
+                            if is_path_clear(actual_position, [new_x, new_y], (1, 0) if new_x > actual_position[0] else (-1, 0)):
+                                is_allowed = True
                     
                     elif piece_type == "Queen":
                         allowed_y_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
@@ -128,7 +157,7 @@ def handle_drag_and_drop():
                         if (((actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y == 0)) or ((actual_position[0] - new_x == 0) and (actual_position[1] - new_y in allowed_y_moves))) or abs(actual_position[0] - new_x) == abs(actual_position[1] - new_y):
                             is_allowed = True
 
-                    elif piece_type == "King": 
+                    elif piece_type == "King":
                         allowed_x_moves = [-1, 0, 1]
                         allowed_y_moves = [-1, 0, 1]
                         
