@@ -16,13 +16,15 @@ secondary_square_color = "#b2a696"
 
 #¼
 screen = pygame.display.set_mode((screen_width, screen_width))
-
+ 
+current_player = "White" # white start
 running = True
 dragging_piece = None  # Currently dragged piece
 
 # Dictionaries for images and starting positions
 pieces_images =  {} 
 pieces_positions = {}
+pieces_color = {}
 pieces_color = {}
 
 for piece in pieces["pieces"]:
@@ -31,6 +33,7 @@ for piece in pieces["pieces"]:
         image = pygame.image.load(piece["image"]) # prend l'image de chaque pièce
         pieces_images[piece_id] = pygame.transform.scale(image, (square_size, square_size)) # redimensionne l'image
         pieces_positions[piece_id] = piece["position"] # prend la position de chaque pièce
+        pieces_color[piece_id] = piece["color"]
 
 # Draw a chess grid by coloring every other square. 
 def draw_chessboard():
@@ -80,8 +83,9 @@ def move_piece(piece_id, new_position): # déplace une pièce et capture une aut
                  
 
 def handle_drag_and_drop():
-    global dragging_piece, piece_id, pieces_color
+    global dragging_piece, piece_id, pieces_color, current_player
     # Prevents from crashing
+    move_made = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False
@@ -106,6 +110,9 @@ def handle_drag_and_drop():
                     actual_position = pieces_positions[dragging_piece]
 
                     piece_settings = next(piece for piece in pieces["pieces"] if piece["id"] == dragging_piece)
+                    piece_owner = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == dragging_piece)
+                    
+                    
                 
                     piece_type = piece_settings["type"]
                     initial_position = piece_settings["position"]
@@ -168,19 +175,24 @@ def handle_drag_and_drop():
                     piece_color = next(piece for piece in pieces["pieces"] if piece["color"] == dragging_piece)
 
                     print("Piece color :", piece_color, "All colors", pieces_color)
-
+                    if piece_owner != current_player:
+                        is_allowed = False 
                     for position in pieces_positions:
                         if [new_x, new_y] == pieces_positions[position]:
                             is_allowed = False
-
+                        
                     if is_allowed:
                         pieces_positions[dragging_piece] = [new_x, new_y]
                         move_piece(dragging_piece, [new_x, new_y])
                         dragging_piece = None
+                        move_made = True
 
                     else:
                         dragging_piece = None 
                         print("Movement in not allowed")
+
+                    if move_made:
+                        current_player = "Black" if current_player == "White" else "White"   
                 else:
                     print("Invalid movement") 
 
