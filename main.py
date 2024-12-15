@@ -44,6 +44,7 @@ def draw_chessboard():
             pygame.draw.rect(screen, color, (col * square_size, row * square_size, square_size, square_size))
 
 # Draw a piece by taking the piece image and initial cordonates
+
 def draw_piece(piece_name, x, y):
     image = pieces_images[piece_name]
     pos_x = (x * square_size) + (square_size - image.get_width()) // 2
@@ -51,6 +52,24 @@ def draw_piece(piece_name, x, y):
     rect = pygame.Rect(pos_x, pos_y, image.get_width(), image.get_height())
     screen.blit(image, (pos_x, pos_y))
     return rect
+
+def promote_piece(piece_id):
+    actual_position = pieces_positions[piece_id]
+    options = ["Queen", "Bishop", "Rook", "knight"]
+    choice = input(f"Choisisez une pieces parmi les options: {options}")
+    for piece in pieces["pieces"]:
+        if piece["id"] == piece_id:
+            piece["type"] = f"{choice}"
+            new_image = draw_piece(choice, actual_position[0], actual_position[1])
+            image = pygame.image.load(new_image)
+            pieces_images[piece_id] = pygame.transform.scale(image, (square_size, square_size))
+
+
+def check_promotion(piece_id, new_position):
+    global pieces_positions, piece
+    piece = next(piece for piece in pieces["pieces"] if piece["id"] == piece_id)
+    if piece["type"] == "White_Pawn" and new_position == 7 or piece["type"] == "Black_Pawn" and new_position == 0:
+        promote_piece(piece_id)
 
 def move_piece(piece_id, new_position): # déplace une pièce et capture une autre si necessaire
     global pieces_positions #Accède à la variable globale pieces_positions qui contient les positions actuelles de toutes les pièces
@@ -160,6 +179,8 @@ def handle_drag_and_drop():
                         if [new_x, new_y] == pieces_positions[position] and piece_owner == pieces_color[position]:
                             is_allowed = False# empèche de jouer si ce n'est pas son tour
                         
+                    check_promotion(dragging_piece, new_y)
+                    
                     if is_allowed:
                         pieces_positions[dragging_piece] = [new_x, new_y]
                         move_piece(dragging_piece, [new_x, new_y])
