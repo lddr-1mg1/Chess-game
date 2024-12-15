@@ -172,9 +172,6 @@ def handle_drag_and_drop():
                     else: 
                         print("This piece is unsupported")
 
-                    piece_color = next(piece for piece in pieces["pieces"] if piece["color"] == dragging_piece)
-
-                    print("Piece color :", piece_color, "All colors", pieces_color)
                     if piece_owner != current_player:
                         is_allowed = False 
                     for position in pieces_positions:
