@@ -179,14 +179,19 @@ def handle_drag_and_drop():
                             
                     if piece_type == "Black_Pawn":
                         allowed_x_moves = [0]
+                        allowed_x_catching_moves = [-1, 1]
+                        allowed_y_catching_moves = [1]
+
                         if actual_position == initial_position:
                             allowed_y_moves = [1, 2]
                         
                         else:
                             allowed_y_moves = [1]
-
+                        for position in pieces_positions:
+                            if [new_x, new_y] == pieces_positions[position] and actual_position[0] - new_x in allowed_x_catching_moves and  actual_position[1] - new_y in allowed_y_catching_moves :
+                                is_allowed = True
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
-                            is_allowed = True
+                            is_allowed = True 
 
                     if piece_type == "White_Pawn":
                         allowed_x_moves = [0]
