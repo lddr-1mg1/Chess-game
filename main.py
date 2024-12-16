@@ -141,7 +141,7 @@ def move_piece(piece_id, new_position): # déplace une pièce et capture une aut
 
     pieces_positions[piece_id] = new_position # met à jour la position
 
-def handle_drag_and_drop():
+def soupe_de_mémé():
     global dragging_piece, piece_id, pieces_color, current_player, can_catch
     # Prevents from crashing
     move_made = False
