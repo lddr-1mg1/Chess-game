@@ -19,7 +19,7 @@ screen = pygame.display.set_mode((screen_width, screen_width))
 current_player = "White" # white start
 running = True
 dragging_piece = None  # Currently dragged piece
-
+can_catch = True
 # Dictionaries for images and starting positions
 
 pieces_color = {}
@@ -134,15 +134,15 @@ def move_piece(piece_id, new_position): # déplace une pièce et capture une aut
     for target_id, target_pos in pieces_positions.items(): # parcourt toutes les pièces du jeu
         current_color = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == dragging_piece)
         target_color = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == target_id)
-    
-        if target_pos == new_position and target_id != piece_id and current_color != target_color: #si la position de la cible est la même que la nouvelle position de la pièce jouée et qu'elles ne sont pas les mêmes  
+        print(can_catch)
+        if target_pos == new_position and target_id != piece_id and current_color != target_color and can_catch: #si la position de la cible est la même que la nouvelle position de la pièce jouée et qu'elles ne sont pas les mêmes  
             del pieces_positions[target_id] # capture
             break # arrête la bouvle dès qu'une pièce est mangée
 
     pieces_positions[piece_id] = new_position # met à jour la position
 
 def handle_drag_and_drop():
-    global dragging_piece, piece_id, pieces_color, current_player
+    global dragging_piece, piece_id, pieces_color, current_player, can_catch
     # Prevents from crashing
     move_made = False
     for event in pygame.event.get():
@@ -185,11 +185,14 @@ def handle_drag_and_drop():
                             allowed_y_moves = [1, 2]
                         else:
                             allowed_y_moves = [1]
+                        can_catch == False
+                        if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
+                            is_allowed = True
+                            can_catch = True  
                         for position in pieces_positions:
                             if [new_x, new_y] == pieces_positions[position] and actual_position[0] - new_x in allowed_x_catching_moves and  actual_position[1] - new_y in allowed_y_catching_moves :
                                 is_allowed = True
-                        if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
-                            is_allowed = True 
+
 
                     if piece_type == "White_Pawn":
                         allowed_x_moves = [0]
