@@ -52,6 +52,14 @@ def draw_piece(piece_name, x, y):
     screen.blit(image, (pos_x, pos_y))
     return rect
 
+def draw():
+    # faire une fonction pour toutes les draw possibles
+
+
+#################################################################
+# faire une fonction  pour chaque mouvement pour simlifier le code et faire les échecs (et mat)
+#################################################################
+
 def promote_piece(piece_id, piece_color):
     print(f"Promoting {piece_id} as {piece_color}")#test
     
@@ -231,7 +239,7 @@ def handle_drag_and_drop():
                             is_allowed = True
 
                     
-                    elif piece_type == "w_queen" or piece_type == "b-queen":
+                    elif piece_type == "w_queen" or piece_type == "b_queen":
                         allowed_y_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
                         allowed_x_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
 
