@@ -166,6 +166,7 @@ def handle_drag_and_drop():
                 new_x, new_y = mouse_x // square_size, mouse_y // square_size  # Snap the piece to the nearest square
                 if 0 <= new_x < 8 and 0 <= new_y < 8: # Chessboard limit
                     
+                    
                     actual_position = pieces_positions[dragging_piece]
 
                     piece_settings = next(piece for piece in pieces["pieces"] if piece["id"] == dragging_piece)
@@ -183,6 +184,7 @@ def handle_drag_and_drop():
 
                         if actual_position == initial_position:
                             allowed_y_moves = [1, 2]
+                        
                         else:
                             allowed_y_moves = [1]
                         can_catch == False
@@ -200,7 +202,7 @@ def handle_drag_and_drop():
                             allowed_y_moves = [-1, -2]
                         else:
                             allowed_y_moves = [-1]
-
+                        
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
                             is_allowed = True
                     
@@ -237,7 +239,7 @@ def handle_drag_and_drop():
                     if piece_owner != current_player:
                         is_allowed = False # Prevents from playing to times 
                     
-                    check_promotion(dragging_piece, pieces_positions[dragging_piece], dragging_piece)
+                    check_promotion(dragging_piece, actual_position, dragging_piece)
 
                     for position in pieces_positions:
                         if [new_x, new_y] == pieces_positions[position] and piece_owner == pieces_color[position]:
@@ -246,9 +248,6 @@ def handle_drag_and_drop():
                     if is_allowed:
                         pieces_positions[dragging_piece] = [new_x, new_y]
                         move_piece(dragging_piece, [new_x, new_y])
-                        print(piece_type)# test
-                        print(pieces_positions[dragging_piece])# test
-                        print(dragging_piece)# test
                         check_promotion(piece_type, pieces_positions[dragging_piece], dragging_piece)
                         dragging_piece = None
                         move_made = True
