@@ -235,8 +235,6 @@ def handle_drag_and_drop():
 
                     if piece_owner != current_player:
                         is_allowed = False # Prevents from playing to times 
-                    
-                    check_promotion(dragging_piece, actual_position, dragging_piece)
 
                     for position in pieces_positions:
                         if [new_x, new_y] == pieces_positions[position] and piece_owner == pieces_color[position]:
