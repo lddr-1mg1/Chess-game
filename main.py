@@ -19,7 +19,6 @@ screen = pygame.display.set_mode((screen_width, screen_width))
 current_player = "White" # white start
 running = True
 dragging_piece = None  # Currently dragged piece
-can_catch = True
 # Dictionaries for images and starting positions
 
 pieces_color = {}
@@ -125,7 +124,6 @@ def check_promotion(piece_type, piece_position, piece_id):
         promote_piece(piece_id, "White")
     elif piece_type == "Black_Pawn" and piece_position[1] == 0:
         promote_piece(piece_id, "Black")
-        print(piece_id)
 
 
 def move_piece(piece_id, new_position): # déplace une pièce et capture une autre si necessaire
@@ -134,14 +132,13 @@ def move_piece(piece_id, new_position): # déplace une pièce et capture une aut
     for target_id, target_pos in pieces_positions.items(): # parcourt toutes les pièces du jeu
         current_color = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == dragging_piece)
         target_color = next(piece["color"] for piece in pieces["pieces"] if piece["id"] == target_id)
-        print(can_catch)
-        if target_pos == new_position and target_id != piece_id and current_color != target_color and can_catch: #si la position de la cible est la même que la nouvelle position de la pièce jouée et qu'elles ne sont pas les mêmes  
+        if target_pos == new_position and target_id != piece_id and current_color != target_color: #si la position de la cible est la même que la nouvelle position de la pièce jouée et qu'elles ne sont pas les mêmes  
             del pieces_positions[target_id] # capture
             break # arrête la bouvle dès qu'une pièce est mangée
 
     pieces_positions[piece_id] = new_position # met à jour la position
 
-def soupe_de_mémé():
+def handle_drag_and_drop():
     global dragging_piece, piece_id, pieces_color, current_player, can_catch
     # Prevents from crashing
     move_made = False
@@ -166,7 +163,6 @@ def soupe_de_mémé():
                 new_x, new_y = mouse_x // square_size, mouse_y // square_size  # Snap the piece to the nearest square
                 if 0 <= new_x < 8 and 0 <= new_y < 8: # Chessboard limit
                     
-                    
                     actual_position = pieces_positions[dragging_piece]
 
                     piece_settings = next(piece for piece in pieces["pieces"] if piece["id"] == dragging_piece)
@@ -176,7 +172,6 @@ def soupe_de_mémé():
                     initial_position = piece_settings["position"]
 
                     is_allowed = False
-                            
                     if piece_type == "Black_Pawn":
                         allowed_x_moves = [0]
                         allowed_x_catching_moves = [-1, 1]
@@ -184,27 +179,41 @@ def soupe_de_mémé():
 
                         if actual_position == initial_position:
                             allowed_y_moves = [1, 2]
-                        
                         else:
                             allowed_y_moves = [1]
-                        can_catch == False
+
+                        # Vérifie si une capture est possible
+                        for target_id, target_position in pieces_positions.items():
+                            if [new_x, new_y] == target_position and actual_position[0] - new_x in allowed_x_catching_moves and actual_position[1] - new_y in allowed_y_catching_moves:
+                                is_allowed = pieces_color[target_id] != piece_owner
+                                break
+
+                        # Vérifie si le mouvement est en ligne droite sans capture
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
-                            is_allowed = True
-                            can_catch = True  
-                        for position in pieces_positions:
-                            if [new_x, new_y] == pieces_positions[position] and actual_position[0] - new_x in allowed_x_catching_moves and  actual_position[1] - new_y in allowed_y_catching_moves :
+                            if not any([new_x, new_y] == position for position in pieces_positions.values()):  # Case libre
                                 is_allowed = True
 
-
-                    if piece_type == "White_Pawn":
+                    elif piece_type == "White_Pawn":
                         allowed_x_moves = [0]
+                        allowed_x_catching_moves = [-1, 1]
+                        allowed_y_catching_moves = [-1]
+
                         if actual_position == initial_position:
                             allowed_y_moves = [-1, -2]
                         else:
                             allowed_y_moves = [-1]
-                        
+
+                        # Vérifie si une capture est possible
+                        for target_id, target_position in pieces_positions.items():
+                            if [new_x, new_y] == target_position and actual_position[0] - new_x in allowed_x_catching_moves and actual_position[1] - new_y in allowed_y_catching_moves:
+                                is_allowed = pieces_color[target_id] != piece_owner
+                                break
+
+                        # Vérifie si le mouvement est en ligne droite sans capture
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
-                            is_allowed = True
+                            if not any([new_x, new_y] == position for position in pieces_positions.values()):  # Case libre
+                                is_allowed = True
+
                     
                     elif piece_type == "w_knight" or piece_type == "b_knight":
                         if (abs(actual_position[0] - new_x) == 2 and abs(actual_position[1] - new_y) == 1) or (abs(actual_position[0] - new_x) == 1 and abs(actual_position[1] - new_y) == 2):
