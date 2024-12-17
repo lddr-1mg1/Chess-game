@@ -9,7 +9,7 @@ with open("pieces.json") as f:
 pygame.init()
 
 # Layout settings
-screen_width = 1000
+screen_width = 700
 square_size = screen_width // 8
 primary_square_color = "#d5c9bb"
 secondary_square_color = "#b2a696"
@@ -52,7 +52,7 @@ def draw_piece(piece_name, x, y):
     screen.blit(image, (pos_x, pos_y))
     return rect
 
-def draw():
+#def draw():
     # faire une fonction pour toutes les draw possibles
 
 
@@ -84,7 +84,7 @@ def promote_piece(piece_id, piece_color):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: # vérifie si un clic gauche a été fait.
                 mouse_x, mouse_y = pygame.mouse.get_pos() # Get x, y cordonates of the mouse
                 for i, option in enumerate(options): # Parcourt les options de promotion pour dessiner leurs boutons.
-                    button_rect = pygame.Rect(150 + i * 200, 300, 150, 100 ) # position x, positon y, taille
+                    button_rect = pygame.Rect(20 + i * 170, 300, 150, 100 ) # position x, positon y, taille
                     if button_rect.collidepoint(mouse_x, mouse_y):
                         choice = option # enregistre le choix 
                         running = False # sortir de la boucle après un choix
@@ -97,7 +97,7 @@ def promote_piece(piece_id, piece_color):
         screen.blit(message, (150, 200)) # position du message
 
         for i, option in enumerate(options):
-            button_rect = pygame.Rect(150 + i * 200, 300, 150, 100)
+            button_rect = pygame.Rect(20 + i * 170, 300, 150, 100)
             pygame.draw.rect(screen, pygame.Color("#808080"), button_rect) # dessine un carré gris
 
             # affiche le texte de chaque bouton
