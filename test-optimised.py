@@ -56,6 +56,9 @@ def move_piece(piece_id, new_piece_x_position, new_piece_y_position):
     else:
         print("Movement is not allowed")
 
+def catch_piece():
+    pass
+
 def handle_drag_and_drop():
     global dragging_piece
     
