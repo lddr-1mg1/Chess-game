@@ -92,7 +92,6 @@ while running:
     # Handle drag and drop
     handle_drag_and_drop()
 
-
     # Draws the pieces 
     for piece_id, (piece_x_position, piece_y_position) in pieces_positions.items(): 
         if piece_id == dragging_piece:
