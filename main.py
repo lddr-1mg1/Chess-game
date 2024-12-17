@@ -212,7 +212,7 @@ def handle_drag_and_drop():
                             is_allowed = True
 
                     
-                    elif piece_type == "w_queen" or piece_type == "b-queen":
+                    elif piece_type == "w_queen" or piece_type == "b_queen":
                         allowed_y_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
                         allowed_x_moves = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7,]
 
@@ -221,6 +221,7 @@ def handle_drag_and_drop():
 
                     elif piece_type == "King":
                         allowed_x_moves = [-1, 0, 1]
+
                         allowed_y_moves = [-1, 0, 1]
                         
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
