@@ -11,15 +11,19 @@ dark_square_color = "#b2a696" # Dark Squares color
 
 screen = pygame.display.set_mode((screen_width, screen_width)) # Apply the height to the window
 
+current_player = "White" # The whites start
 running = True # Main loop variable
 dragging_piece = None
 
+# These are empty dictionaries that will be filled later in the code
+pieces_colors = {} # Create a dictionary with every piece color
 pieces_positions = {} # Create a dictionary with every piece position
 pieces_images = {} # Create a dictionary with every piece image
 
 # Get precises pieces settings
 for piece in pieces["pieces"]:
     piece_id = piece["id"] # Get piece id 
+    pieces_colors[piece_id] = piece["color"] # Get piece color ans add it into the pieces_colors dictionary
     pieces_positions[piece_id] = piece["position"] # Get piece position ans add it into the pieces_position dictionary
     piece_image = pygame.image.load(piece["image"]) # Get the image path
     pieces_images[piece_id] = pygame.transform.scale(piece_image, (square_size, square_size)) # Transform image to the right size and add it into pieces_image dictionary
@@ -39,8 +43,20 @@ def draw_piece(piece_id, piece_x_position, piece_y_position):
     grid_y_position = (piece_y_position * square_size) + (square_size - piece_image.get_width()) // 2 # Get tje correct row
     screen.blit(piece_image, (grid_x_position, grid_y_position)) # Display the piece on the screen
 
+def check_turn(piece_id):
+    global current_player
+
+    piece_color = pieces_colors[piece_id] # Get piece color 
+    
+    if piece_color == current_player: 
+        current_player = "Black" if current_player == "White" else "White" # Change current player 
+        return True
+
 def move_piece(piece_id, new_piece_x_position, new_piece_y_position):
-    pieces_positions[piece_id] = [new_piece_x_position, new_piece_y_position] # 
+    if check_turn(piece_id):
+        pieces_positions[piece_id] = [new_piece_x_position, new_piece_y_position]
+    else:
+        print("Movement is not allowed")
 
 def handle_drag_and_drop():
     global dragging_piece
