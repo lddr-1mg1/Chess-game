@@ -32,10 +32,8 @@ for piece in pieces["pieces"]:
 def draw_chessboard():
     for row in range(8):
         for col in range(8):
-            # Determines the color of the square if the square "coordinate" is odd or even
-            color = pygame.Color(light_square_color) if (row + col) % 2 == 0 else pygame.Color(dark_square_color)
-            # Draws the square
-            pygame.draw.rect(screen, color, (col * square_size, row * square_size, square_size, square_size))
+            color = pygame.Color(light_square_color) if (row + col) % 2 == 0 else pygame.Color(dark_square_color) # Determines the color of the square if the square "coordinate" is odd or even
+            pygame.draw.rect(screen, color, (col * square_size, row * square_size, square_size, square_size)) # Draws the square 
 
 def draw_piece(piece_id, piece_x_position, piece_y_position):
     piece_image = pieces_images[piece_id] # Get precise image path
@@ -104,3 +102,6 @@ while running:
 
     # Display the window 
     pygame.display.flip()
+
+# Quit Pygame
+pygame.quit()
