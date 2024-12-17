@@ -55,7 +55,7 @@ def draw_piece(piece_name, x, y):
 #def draw():
     # faire une fonction pour toutes les draw possibles
 
-
+    pass
 #################################################################
 # faire une fonction  pour chaque mouvement pour simlifier le code et faire les échecs (et mat)
 #################################################################
@@ -248,6 +248,7 @@ def handle_drag_and_drop():
 
                     elif piece_type == "King":
                         allowed_x_moves = [-1, 0, 1]
+
                         allowed_y_moves = [-1, 0, 1]
                         
                         if (actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y in allowed_y_moves):
