@@ -63,17 +63,18 @@ def draw_repitition():
         screen.fill("#000000")
         font = pygame.font.Font(None, 66) # crée une police d'ecriture de 66
         message = font.render("partie nulle par répétition", True,  pygame.Color("#FFFFFF")) # affiche le message en blanc #True rend le texte plus lisse
-        screen.blit(message, (150, 200)) # position du message
+        screen.blit(message, (70, 200)) # position du message
         
         pygame.display.flip()
-        pygame.time.wait(10000)
+        pygame.time.wait(10000) # attendre pour ne pas réafficher l'échiquier
         pygame.quit()
 
+def black_pawn_mouvement():
+    pass
 
-# faire une fonction pour toutes les draw possibles
-#################################################################
-# faire une fonction  pour chaque mouvement pour simlifier le code et faire les échecs (et mat)
-#################################################################
+def white_pawn_mouvement():
+    pass
+
 
 def promote_piece(piece_id, piece_color):
     print(f"Promoting {piece_id} as {piece_color}")#test
