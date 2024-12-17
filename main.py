@@ -11,8 +11,8 @@ pygame.init()
 # Layout settings
 screen_width = 1000
 square_size = screen_width // 8
-primary_square_color = "#d5c9bb"
-secondary_square_color = "#b2a696"
+light_square_color = "#d5c9bb"
+dark_square_color = "#b2a696"
 
 screen = pygame.display.set_mode((screen_width, screen_width))
  
@@ -38,7 +38,7 @@ def draw_chessboard():
     for row in range(8):
         for col in range(8):
             # Determines the color of the square
-            color = pygame.Color(primary_square_color) if (row + col) % 2 == 0 else pygame.Color(secondary_square_color)
+            color = pygame.Color(light_square_color) if (row + col) % 2 == 0 else pygame.Color(dark_square_color)
             # Draw the square
             pygame.draw.rect(screen, color, (col * square_size, row * square_size, square_size, square_size))
 
@@ -59,6 +59,8 @@ def draw():
 #################################################################
 # faire une fonction  pour chaque mouvement pour simlifier le code et faire les échecs (et mat)
 #################################################################
+
+
 
 def promote_piece(piece_id, piece_color):
     print(f"Promoting {piece_id} as {piece_color}")#test
