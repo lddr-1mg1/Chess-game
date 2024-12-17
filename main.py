@@ -55,7 +55,7 @@ def draw_piece(piece_name, x, y):
 def draw():
     # faire une fonction pour toutes les draw possibles
 
-
+    pass
 #################################################################
 # faire une fonction  pour chaque mouvement pour simlifier le code et faire les échecs (et mat)
 #################################################################
