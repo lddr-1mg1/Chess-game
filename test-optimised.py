@@ -24,36 +24,45 @@ for piece in pieces["pieces"]:
     piece_image = pygame.image.load(piece["image"]) # Get the image path
     pieces_images[piece_id] = pygame.transform.scale(piece_image, (square_size, square_size)) # Transform image to the right size and add it into pieces_image dictionary
 
-# Draw a chess grid by coloring every other square. 
+# Draws a chess grid by coloring every other square. 
 def draw_chessboard():
     for row in range(8):
         for col in range(8):
-            # Determines the color of the square if the square "cordonate" is odd or even
+            # Determines the color of the square if the square "coordinate" is odd or even
             color = pygame.Color(light_square_color) if (row + col) % 2 == 0 else pygame.Color(dark_square_color)
-            # Draw the square
+            # Draws the square
             pygame.draw.rect(screen, color, (col * square_size, row * square_size, square_size, square_size))
 
 def draw_piece(piece_id, piece_x_position, piece_y_position):
     piece_image = pieces_images[piece_id] # Get precise image path
-    grid_x_position = (piece_x_position * square_size) + (square_size - piece_image.get_width()) // 2 # Set x cordonate in the center of the square
-    grid_y_position = (piece_y_position * square_size) + (square_size - piece_image.get_width()) // 2 # Set y cordonate in the center of the square
+    grid_x_position = (piece_x_position * square_size) + (square_size - piece_image.get_width()) // 2 # Get the correct column
+    grid_y_position = (piece_y_position * square_size) + (square_size - piece_image.get_width()) // 2 # Get tje correct row
     screen.blit(piece_image, (grid_x_position, grid_y_position)) # Display the piece on the screen
 
-    piece_rect = pygame.Rect(grid_x_position, grid_y_position, piece_image.get_width(), piece_image.get_height())
-    return piece_rect
+def move_piece(piece_id, new_piece_x_position, new_piece_y_position):
+    pieces_positions[piece_id] = [new_piece_x_position, new_piece_y_position] # 
 
 def handle_drag_and_drop():
     global dragging_piece
     
-    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: # Detect if left mouse button is pressed
-        mouse_x_cordonate, mouse_y_cordonate = pygame.mouse.get_pos() # Get x, y cordonates of the mouse
-        for piece_id, (piece_x_position, piece_y_position) in pieces_positions.items(): # WARN !!!
-            piece_rect = draw_piece(piece_id, piece_x_position, piece_y_position) # WARN !!!!
-            if piece_rect.collidepoint(mouse_x_cordonate, mouse_y_cordonate): # Verify if the piece collide with the mouse 
-                    dragging_piece = piece_id # Set the piece as beeing dragged
-    
+    mouse_x_coordinate, mouse_y_coordinate = pygame.mouse.get_pos()  # Get x, y coordinates of the mouse
+
+    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Detect if left mouse button is pressed
+        for piece_id, (piece_x_position, piece_y_position) in pieces_positions.items(): # Get every pieces x, y position on pieces_positions
+
+            piece_image = pieces_images[piece_id]
+            grid_x_position = (piece_x_position * square_size) + (square_size - piece_image.get_width()) // 2 # Get the correct column
+            grid_y_position = (piece_y_position * square_size) + (square_size - piece_image.get_height()) // 2 # Get the correct row
+            piece_rect = pygame.Rect(grid_x_position, grid_y_position, piece_image.get_width(), piece_image.get_height()) # Get the rectangle of the piece
+            
+            if piece_rect.collidepoint(mouse_x_coordinate, mouse_y_coordinate): # Verify if the piece collide with the mouse
+                dragging_piece = piece_id # Set the piece as beeing dragged
+
     if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-        pass
+        if dragging_piece: # Check if a piece is beeing dragged
+            new_piece_x_position, new_piece_y_position = mouse_x_coordinate // square_size, mouse_y_coordinate // square_size # Set the new coordinates into a square
+            move_piece(dragging_piece, new_piece_x_position, new_piece_y_position) # Move the piece
+            dragging_piece = False
 
 while running:
     # Prevents from crashing
@@ -61,21 +70,22 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # Draw the chessboard
+    # Draws the chessboard
     draw_chessboard()
+
+    # Handle drag and drop
     handle_drag_and_drop()
 
-    print(dragging_piece)
 
-    # Draw the pieces 
+    # Draws the pieces 
     for piece_id, (piece_x_position, piece_y_position) in pieces_positions.items(): 
         if piece_id == dragging_piece:
-            mouse_x_cordonate, mouse_y_cordonate = pygame.mouse.get_pos() # Get x, y cordonates of the mouse
-            position_x = mouse_x_cordonate - (square_size // 2)
-            postiion_y = mouse_y_cordonate - (square_size // 2)
-            screen.blit(piece_image[piece_id], (position_x, postiion_y))
+            mouse_x_coordinate, mouse_y_coordinate = pygame.mouse.get_pos() # Get x, y coordinates of the mouse
+            piece_x_position = mouse_x_coordinate - (square_size // 2)
+            piece_y_position = mouse_y_coordinate - (square_size // 2)
+            screen.blit(pieces_images[piece_id], (piece_x_position, piece_y_position)) # Draws the piece at the new place, we can't use the draw_piece function because that will make disapear the piece while dragged.
         else :
-            draw_piece(piece_id, piece_x_position, piece_y_position)
+            draw_piece(piece_id, piece_x_position, piece_y_position) # Draws the piece
 
     # Display the window 
     pygame.display.flip()
