@@ -13,7 +13,7 @@ screen = pygame.display.set_mode((screen_width, screen_width)) # Apply the heigh
 
 current_player = "White" # The whites start
 running = True # Main loop variable
-dragging_piece = None
+dragging_piece = None # Contains the piece that is beeing dragged
 
 # These are empty dictionaries that will be filled later in the code
 pieces_colors = {} # Create a dictionary with every piece color
@@ -42,8 +42,8 @@ def draw_piece(piece_id, piece_x_position, piece_y_position):
     screen.blit(piece_image, (grid_x_position, grid_y_position)) # Display the piece on the screen
 
 def can_move(piece_id):
-    piece_color = pieces_colors[piece_id] # Check if current player is playing
-    return piece_color == current_player
+    piece_color = pieces_colors[piece_id] 
+    return piece_color == current_player # Return the result of : if current player is playing
 
 def move_piece(piece_id, new_piece_x_position, new_piece_y_position):
     if can_move(piece_id) and catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
