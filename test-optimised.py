@@ -41,23 +41,29 @@ def draw_piece(piece_id, piece_x_position, piece_y_position):
     grid_y_position = (piece_y_position * square_size) + (square_size - piece_image.get_width()) // 2 # Get tje correct row
     screen.blit(piece_image, (grid_x_position, grid_y_position)) # Display the piece on the screen
 
-def check_turn(piece_id):
-    global current_player
-
-    piece_color = pieces_colors[piece_id] # Get piece color 
-    
-    if piece_color == current_player: 
-        current_player = "Black" if current_player == "White" else "White" # Change current player 
-        return True
+def can_move(piece_id):
+    piece_color = pieces_colors[piece_id] # Check if current player is playing
+    return piece_color == current_player
 
 def move_piece(piece_id, new_piece_x_position, new_piece_y_position):
-    if check_turn(piece_id):
-        pieces_positions[piece_id] = [new_piece_x_position, new_piece_y_position]
+    if can_move(piece_id) and catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
+        pieces_positions[piece_id] = [new_piece_x_position, new_piece_y_position] # move the piece 
+        global current_player
+        current_player = "Black" if current_player == "White" else "White" # Change player when played
     else:
         print("Movement is not allowed")
 
-def catch_piece():
-    pass
+def catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
+    new_piece_position = [new_piece_x_position, new_piece_y_position]
+    piece_color = pieces_colors[piece_id]
+
+    for target_id, target_position in list(pieces_positions.items()):
+        if target_position == new_piece_position and target_id != piece_id:
+            if piece_color != pieces_colors[target_id]:
+                del pieces_positions[target_id]
+            else:
+                return False
+    return True
 
 def handle_drag_and_drop():
     global dragging_piece
