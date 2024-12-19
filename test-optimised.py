@@ -71,7 +71,7 @@ def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_positio
     if can_move(piece_id) and catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
         # Ignore path clearing for knights
         if "knight" not in pieces_types[piece_id]:
-            if not is_path_clear(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
+            if not is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
                 return
 
         # Move the piece
@@ -224,7 +224,7 @@ def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
 #         draw_promotion_screen()
 
 #     pieces_types[piece_id] = choice
-#     image_path = f"./pieces/{choice}_png_shadow_512px.png"
+#     image_path = f"./images/{choice}_png_shadow_512px.png"
 #     pieces_images[piece_id] = pygame.transform.scale(pygame.image.load(image_path), (square_size, square_size))
 
 #     draw_chessboard()

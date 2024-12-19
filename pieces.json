@@ -6,7 +6,7 @@
             "color": "White",
             "position": [0, 0],
             "moves": 0,
-            "image": "./pieces/w_rook_png_shadow_512px.png"
+            "image": "./images/w_rook_png_shadow_512px.png"
         },
         {
             "id": 2,
@@ -14,7 +14,7 @@
             "color": "White",
             "position": [7, 0],
             "moves": 0,
-            "image": "./pieces/w_rook_png_shadow_512px.png"
+            "image": "./images/w_rook_png_shadow_512px.png"
         },
         {
             "id": 3,
@@ -22,7 +22,7 @@
             "color": "White",
             "position": [1, 0],
             "moves": 0,
-            "image": "./pieces/w_knight_png_shadow_512px.png"
+            "image": "./images/w_knight_png_shadow_512px.png"
         },
         {
             "id": 4,
@@ -30,7 +30,7 @@
             "color": "White",
             "position": [6, 0],
             "moves": 0,
-            "image": "./pieces/w_knight_png_shadow_512px.png"
+            "image": "./images/w_knight_png_shadow_512px.png"
         },
         {
             "id": 5,
@@ -38,7 +38,7 @@
             "color": "White",
             "position": [2, 0],
             "moves": 0,
-            "image": "./pieces/w_bishop_png_shadow_512px.png"
+            "image": "./images/w_bishop_png_shadow_512px.png"
         },
         {
             "id": 6,
@@ -46,7 +46,7 @@
             "color": "White",
             "position": [5, 0],
             "moves": 0,
-            "image": "./pieces/w_bishop_png_shadow_512px.png"
+            "image": "./images/w_bishop_png_shadow_512px.png"
         },
         {
             "id": 7,
@@ -54,7 +54,7 @@
             "color": "White",
             "position": [4, 0],
             "moves": 0,
-            "image": "./pieces/w_queen_png_shadow_512px.png"
+            "image": "./images/w_queen_png_shadow_512px.png"
         },
         {
             "id": 8,
@@ -62,7 +62,7 @@
             "color": "White",
             "position": [3, 0],
             "moves": 0,
-            "image": "./pieces/w_king_png_shadow_512px.png"
+            "image": "./images/w_king_png_shadow_512px.png"
         },
         {
             "id": 9,
@@ -70,7 +70,7 @@
             "color": "White",
             "position": [0, 1],
             "moves": 0,
-            "image": "./pieces/w_pawn_png_shadow_512px.png"
+            "image": "./images/w_pawn_png_shadow_512px.png"
         },
         {
             "id": 10,
@@ -78,7 +78,7 @@
             "color": "White",
             "position": [1, 1],
             "moves": 0,
-            "image": "./pieces/w_pawn_png_shadow_512px.png"
+            "image": "./images/w_pawn_png_shadow_512px.png"
         },
         {
             "id": 11,
@@ -86,7 +86,7 @@
             "color": "White",
             "position": [2, 1],
             "moves": 0,
-            "image": "./pieces/w_pawn_png_shadow_512px.png"
+            "image": "./images/w_pawn_png_shadow_512px.png"
         },
         {
             "id": 12,
@@ -94,7 +94,7 @@
             "color": "White",
             "position": [3, 1],
             "moves": 0,
-            "image": "./pieces/w_pawn_png_shadow_512px.png"
+            "image": "./images/w_pawn_png_shadow_512px.png"
         },
         {
             "id": 13,
@@ -102,7 +102,7 @@
             "color": "White",
             "position": [4, 1],
             "moves": 0,
-            "image": "./pieces/w_pawn_png_shadow_512px.png"
+            "image": "./images/w_pawn_png_shadow_512px.png"
         },
         {
             "id": 14,
@@ -110,7 +110,7 @@
             "color": "White",
             "position": [5, 1],
             "moves": 0,
-            "image": "./pieces/w_pawn_png_shadow_512px.png"
+            "image": "./images/w_pawn_png_shadow_512px.png"
         },
         {
             "id": 15,
@@ -118,7 +118,7 @@
             "color": "White",
             "position": [6, 1],
             "moves": 0,
-            "image": "./pieces/w_pawn_png_shadow_512px.png"
+            "image": "./images/w_pawn_png_shadow_512px.png"
         },
         {
             "id": 16,
@@ -126,7 +126,7 @@
             "color": "White",
             "position": [7, 1],
             "moves": 0,
-            "image": "./pieces/w_pawn_png_shadow_512px.png"
+            "image": "./images/w_pawn_png_shadow_512px.png"
         },
         {
             "id": 17,
@@ -134,7 +134,7 @@
             "color": "Black",
             "position": [0, 7],
             "moves": 0,
-            "image": "./pieces/b_rook_png_shadow_512px.png"
+            "image": "./images/b_rook_png_shadow_512px.png"
         },
         {
             "id": 18,
@@ -142,7 +142,7 @@
             "color": "Black",
             "position": [7, 7],
             "moves": 0,
-            "image": "./pieces/b_rook_png_shadow_512px.png"
+            "image": "./images/b_rook_png_shadow_512px.png"
         },
         {
             "id": 19,
@@ -150,7 +150,7 @@
             "color": "Black",
             "position": [1, 7],
             "moves": 0,
-            "image": "./pieces/b_knight_png_shadow_512px.png"
+            "image": "./images/b_knight_png_shadow_512px.png"
         },
         {
             "id": 20,
@@ -158,7 +158,7 @@
             "color": "Black",
             "position": [6, 7],
             "moves": 0,
-            "image": "./pieces/b_knight_png_shadow_512px.png"
+            "image": "./images/b_knight_png_shadow_512px.png"
         },
         {
             "id": 21,
@@ -166,7 +166,7 @@
             "color": "Black",
             "position": [2, 7],
             "moves": 0,
-            "image": "./pieces/b_bishop_png_shadow_512px.png"
+            "image": "./images/b_bishop_png_shadow_512px.png"
         },
         {
             "id": 22,
@@ -174,7 +174,7 @@
             "color": "Black",
             "position": [5, 7],
             "moves": 0,
-            "image": "./pieces/b_bishop_png_shadow_512px.png"
+            "image": "./images/b_bishop_png_shadow_512px.png"
         },
         {
             "id": 23,
@@ -182,7 +182,7 @@
             "color": "Black",
             "position": [4, 7],
             "moves": 0,
-            "image": "./pieces/b_queen_png_shadow_512px.png"
+            "image": "./images/b_queen_png_shadow_512px.png"
         },
         {
             "id": 24,
@@ -190,7 +190,7 @@
             "color": "Black",
             "position": [3, 7],
             "moves": 0,
-            "image": "./pieces/b_king_png_shadow_512px.png"
+            "image": "./images/b_king_png_shadow_512px.png"
         },
         {
             "id": 25,
@@ -198,7 +198,7 @@
             "color": "Black",
             "position": [0, 6],
             "moves": 0,
-            "image": "./pieces/b_pawn_png_shadow_512px.png"
+            "image": "./images/b_pawn_png_shadow_512px.png"
         },
         {
             "id": 26,
@@ -206,7 +206,7 @@
             "color": "Black",
             "position": [1, 6],
             "moves": 0,
-            "image": "./pieces/b_pawn_png_shadow_512px.png"
+            "image": "./images/b_pawn_png_shadow_512px.png"
         },
         {
             "id": 27,
@@ -214,7 +214,7 @@
             "color": "Black",
             "position": [2, 6],
             "moves": 0,
-            "image": "./pieces/b_pawn_png_shadow_512px.png"
+            "image": "./images/b_pawn_png_shadow_512px.png"
         },
         {
             "id": 28,
@@ -222,7 +222,7 @@
             "color": "Black",
             "position": [3, 6],
             "moves": 0,
-            "image": "./pieces/b_pawn_png_shadow_512px.png"
+            "image": "./images/b_pawn_png_shadow_512px.png"
         },
         {
             "id": 29,
@@ -230,7 +230,7 @@
             "color": "Black",
             "position": [4, 6],
             "moves": 0,
-            "image": "./pieces/b_pawn_png_shadow_512px.png"
+            "image": "./images/b_pawn_png_shadow_512px.png"
         },
         {
             "id": 30,
@@ -238,7 +238,7 @@
             "color": "Black",
             "position": [5, 6],
             "moves": 0,
-            "image": "./pieces/b_pawn_png_shadow_512px.png"
+            "image": "./images/b_pawn_png_shadow_512px.png"
         },
         {
             "id": 31,
@@ -246,7 +246,7 @@
             "color": "Black",
             "position": [6, 6],
             "moves": 0,
-            "image": "./pieces/b_pawn_png_shadow_512px.png"
+            "image": "./images/b_pawn_png_shadow_512px.png"
         },
         {
             "id": 32,
@@ -254,7 +254,7 @@
             "color": "Black",
             "position": [7, 6],
             "moves": 0,
-            "image": "./pieces/b_pawn_png_shadow_512px.png"
+            "image": "./images/b_pawn_png_shadow_512px.png"
         }
     ]
 }

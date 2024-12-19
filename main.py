@@ -130,7 +130,7 @@ def promote_piece(piece_id, piece_color):
     for piece in pieces["pieces"]:
         if piece["id"] == piece_id:
             piece["type"] = f"{choice}"
-            new_image = f"./pieces/{choice}_png_shadow_512px.png"
+            new_image = f"./images/{choice}_png_shadow_512px.png"
             print(new_image) # test
             image = pygame.image.load(new_image)
             pieces_images[piece_id] = pygame.transform.scale(image, (square_size, square_size))
