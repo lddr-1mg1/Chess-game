@@ -25,9 +25,9 @@ pieces_images = {} # Create a dictionary with every piece image
 # Get precises pieces settings
 for piece in pieces["pieces"]:
     piece_id = piece["id"] # Get piece id 
-    pieces_types[piece_id] = piece["type"]
-    pieces_colors[piece_id] = piece["color"] # Get piece color ans add it into the pieces_colors dictionary
-    pieces_positions[piece_id] = piece["position"] # Get piece position ans add it into the pieces_position dictionary
+    pieces_types[piece_id] = piece["type"] # Get piece type and add it into the pieces_colors dictionary
+    pieces_colors[piece_id] = piece["color"] # Get piece color and add it into the pieces_colors dictionary
+    pieces_positions[piece_id] = piece["position"] # Get piece position and add it into the pieces_position dictionary
     pieces_moves[piece_id] = piece["moves"] # Get the piece number of moves during the party
     piece_image = pygame.image.load(piece["image"]) # Get the image path
     pieces_images[piece_id] = pygame.transform.scale(piece_image, (square_size, square_size)) # Transform image to the right size and add it into pieces_image dictionary
@@ -47,7 +47,7 @@ def draw_piece(piece_id, piece_x_position, piece_y_position):
 
 def can_move(piece_id):
     piece_color = pieces_colors[piece_id] 
-    return piece_color == current_player # Vérifie si c'est le tour du joueur
+    return piece_color == current_player # Verifies if it the player's turn
 
 def is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
 
@@ -107,14 +107,14 @@ def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
     ]
 
     if (new_piece_x_position, new_piece_y_position) in allowed_moves:
-        if [new_piece_x_position, new_piece_y_position] not in pieces_positions.values():  # La case doit être vide
+        if [new_piece_x_position, new_piece_y_position] not in pieces_positions.values():
             move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             return
 
     if (new_piece_x_position, new_piece_y_position) in diagonal_captures:
         target_position = [new_piece_x_position, new_piece_y_position]
         for target_id, position in pieces_positions.items():
-            if position == target_position and pieces_colors[target_id] != pieces_colors[piece_id]:  # La pièce doit être ennemie
+            if position == target_position and pieces_colors[target_id] != pieces_colors[piece_id]:
                 move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
                 return
 
