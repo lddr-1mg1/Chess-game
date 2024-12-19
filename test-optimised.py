@@ -49,7 +49,7 @@ def can_move(piece_id):
     piece_color = pieces_colors[piece_id] 
     return piece_color == current_player # Vérifie si c'est le tour du joueur
 
-def is_path_clear(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
+def is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
 
     difference_x = new_piece_x_position - piece_x_position # Gets the number of cell that the piece aims to reach for x 
     difference_y = new_piece_y_position - piece_y_position # Gets the number of cell that the piece aims to reach for y
