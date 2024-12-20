@@ -157,79 +157,79 @@ def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
 
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
-# def check_promotion(piece_id, piece_y_position):
-#     piece_type = pieces_types[piece_id]
+def check_promotion(piece_id, piece_y_position):
+    piece_type = pieces_types[piece_id]
 
-#     if piece_type == "White_Pawn" and piece_y_position == 7:
-#         promote_piece(piece_id, "White")
-#     elif piece_type == "Black_Pawn" and piece_y_position == 0:
-#         promote_piece(piece_id, "Black")
+    if piece_type == "White_Pawn" and piece_y_position == 7:
+        promote_piece(piece_id, "White")
+    elif piece_type == "Black_Pawn" and piece_y_position == 0:
+        promote_piece(piece_id, "Black")
 
-# def promote_piece(piece_id, piece_color):
-#     options = ["queen", "bishop", "rook", "knight"]
-#     prefix = "w" if piece_color == "White" else "b"
-#     options = [f"{prefix}_{option}" for option in options]
-#     font = pygame.font.Font(None, screen_width//12)
+def promote_piece(piece_id, piece_color):
+    options = ["queen", "bishop", "rook", "knight"]
+    prefix = "w" if piece_color == "White" else "b"
+    options = [f"{prefix}_{option}" for option in options]
+    font = pygame.font.Font(None, screen_width//12)
 
-#     def draw_promotion_screen():
-#         # Charger et redimensionner l'image de fond
-#         bg = pygame.image.load("blured_background.jpg")
-#         bg = pygame.transform.scale(bg, (screen_width, screen_width))
-#         screen.blit(bg, (0, 0))
+    def draw_promotion_screen():
+        # Charger et redimensionner l'image de fond
+        bg = pygame.image.load("blured_background.jpg")
+        bg = pygame.transform.scale(bg, (screen_width, screen_width))
+        screen.blit(bg, (0, 0))
         
-#         # Afficher le message centré
-#         message = font.render("Promote your piece!", True, pygame.Color("#FFFFFF"))
-#         message_rect = message.get_rect(center=(screen_width // 2, screen_width // 3))
-#         screen.blit(message, message_rect)
+        # Afficher le message centré
+        message = font.render("Promote your piece!", True, pygame.Color("#FFFFFF"))
+        message_rect = message.get_rect(center=(screen_width // 2, screen_width // 3))
+        screen.blit(message, message_rect)
         
-#         # Calculer les dimensions et positions des boutons
-#         button_width, button_height = screen_width//5, screen_width//9
-#         total_buttons_width = len(options) * button_width + (len(options) - 1) * 20  # Inclure les espaces entre les boutons
-#         start_x = (screen_width - total_buttons_width) // 2  # Point de départ pour centrer les boutons horizontalement
-#         button_y = screen_width // 2  # Position verticale des boutons
+        # Calculer les dimensions et positions des boutons
+        button_width, button_height = screen_width//5, screen_width//9
+        total_buttons_width = len(options) * button_width + (len(options) - 1) * 20  # Inclure les espaces entre les boutons
+        start_x = (screen_width - total_buttons_width) // 2  # Point de départ pour centrer les boutons horizontalement
+        button_y = screen_width // 2  # Position verticale des boutons
         
-#         for i, option in enumerate(options):
-#             # Calculer la position de chaque bouton
-#             button_x = start_x + i * (button_width + 20)
-#             button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        for i, option in enumerate(options):
+            # Calculer la position de chaque bouton
+            button_x = start_x + i * (button_width + 20)
+            button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
 
-#             # Dessiner les boutons avec des bords arrondis
-#             pygame.draw.rect(screen, pygame.Color("#FFFFFF"), button_rect, border_radius=15)
+            # Dessiner les boutons avec des bords arrondis
+            pygame.draw.rect(screen, pygame.Color("#FFFFFF"), button_rect, border_radius=15)
 
-#             # Ajouter le texte centré dans chaque bouton
-#             option_text = font.render(option.split('_')[1], True, pygame.Color("#000000"))
-#             text_rect = option_text.get_rect(center=button_rect.center)
-#             screen.blit(option_text, text_rect)
+            # Ajouter le texte centré dans chaque bouton
+            option_text = font.render(option.split('_')[1], True, pygame.Color("#000000"))
+            text_rect = option_text.get_rect(center=button_rect.center)
+            screen.blit(option_text, text_rect)
         
-#         # Rafraîchir l'affichage
-#         pygame.display.flip()
+        # Rafraîchir l'affichage
+        pygame.display.flip()
 
 
-#     running = True
-#     choice = None
-#     while running:
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 pygame.quit()
-#                 exit()
+    running = True
+    choice = None
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
 
-#             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-#                 mouse_x, mouse_y = pygame.mouse.get_pos()
-#                 for i, option in enumerate(options):
-#                     button_rect = pygame.Rect(20 + i * 170, 300, 150, 100)
-#                     if button_rect.collidepoint(mouse_x, mouse_y):
-#                         choice = option
-#                         running = False
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                for i, option in enumerate(options):
+                    button_rect = pygame.Rect(20 + i * 170, 300, 150, 100)
+                    if button_rect.collidepoint(mouse_x, mouse_y):
+                        choice = option
+                        running = False
 
-#         draw_promotion_screen()
+        draw_promotion_screen()
 
-#     pieces_types[piece_id] = choice
-#     image_path = f"./images/{choice}_png_shadow_512px.png"
-#     pieces_images[piece_id] = pygame.transform.scale(pygame.image.load(image_path), (square_size, square_size))
+    pieces_types[piece_id] = choice
+    image_path = f"./images/{choice}_png_shadow_512px.png"
+    pieces_images[piece_id] = pygame.transform.scale(pygame.image.load(image_path), (square_size, square_size))
 
-#     draw_chessboard()
-#     for piece_name, (piece_x, piece_y) in pieces_positions.items():
-#         draw_piece(piece_name, piece_x, piece_y)
+    draw_chessboard()
+    for piece_name, (piece_x, piece_y) in pieces_positions.items():
+        draw_piece(piece_name, piece_x, piece_y)
 #     pygame.display.flip()
 
 def handle_drag_and_drop():
@@ -262,7 +262,7 @@ def handle_drag_and_drop():
             queen_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             king_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
-            # check_promotion(dragging_piece, new_piece_y_position)
+            check_promotion(dragging_piece, new_piece_y_position)
 
             dragging_piece = None
 
