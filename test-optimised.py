@@ -21,6 +21,7 @@ pieces_colors = {} # Create a dictionary with every piece color
 pieces_positions = {} # Create a dictionary with every piece position
 pieces_moves = {} # Create a dictionary with every piece move count
 pieces_images = {} # Create a dictionary with every piece image
+accessibles_cells = []
 
 # Get precises pieces settings
 for piece in pieces["pieces"]:
@@ -68,7 +69,7 @@ def is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_
     return True
 
 def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-    if can_move(piece_id) and catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
+    if can_move(piece_id) and catch_piece(piece_id, new_piece_x_position,new_piece_y_position):
         # Ignore path clearing for knights
         if "knight" not in pieces_types[piece_id]:
             if not is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
@@ -77,9 +78,13 @@ def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_positio
         # Move the piece
         pieces_positions[piece_id] = [new_piece_x_position, new_piece_y_position]
         global current_player
-        current_player = "Black" if current_player == "White" else "White"  # Change player
-        pieces_moves[piece_id] = pieces_moves[piece_id] + 1  # Add one move to the piece
 
+        if (new_piece_x_position, new_piece_y_position) != (piece_x_position, piece_y_position):  # If the new cell is not the same with the current cell
+            current_player = "Black" if current_player == "White" else "White"  # Change player
+            pieces_moves[piece_id] = pieces_moves[piece_id] + 1  # Add one move to the piece
+
+        print(pieces_moves[piece_id])
+        
 def catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
     new_piece_position = [new_piece_x_position, new_piece_y_position]
     piece_color = pieces_colors[piece_id]
@@ -118,13 +123,33 @@ def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
                 move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
                 return
 
+
+def accessible_cells():
+    for piece_id in pieces_positions:
+        for x_cell in range(8):
+            for y_cell in range(8):
+                if "rook" in pieces_types[piece_id]: # Checks if the piece is a rook
+                    if (x_cell == pieces_positions[piece_id][0] or y_cell == pieces_positions[piece_id][1]) and is_path_clear(pieces_positions[piece_id][0], pieces_positions[piece_id][1], x_cell, y_cell):
+                        accessibles_cells.append([x_cell, y_cell])
+                elif "knight" in pieces_types[piece_id]:
+                    if  ((abs(x_cell - pieces_positions[piece_id][0]) == 2 and abs(y_cell - pieces_positions[piece_id][1]) == 1) or
+                            (abs(x_cell - pieces_positions[piece_id][0]) == 1 and abs(y_cell - pieces_positions[piece_id][1]) == 2)):
+                        accessibles_cells.append([x_cell, y_cell])
+                y_cell += 1
+            x_cell += 1
+    
+    print(accessibles_cells)
+
+
 def rook_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "rook" not in pieces_types[piece_id]: # Checks if the piece is a rook
         return
-    
+    print("Les cases accescibles de la tour sont ", accessibles_cells)
+
     if not (new_piece_x_position == piece_x_position or new_piece_y_position == piece_y_position): # If the movement is not a strait line the movement is not allowed
         return
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
+    
 
 def knight_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "knight" not in pieces_types[piece_id]: # Check if the piece is a knight
@@ -253,7 +278,7 @@ def handle_drag_and_drop():
             new_piece_x_position, new_piece_y_position = mouse_x_coordinate // square_size, mouse_y_coordinate // square_size # Set the new coordinates into a square
 
             piece_x_position, piece_y_position = pieces_positions[dragging_piece]
-
+            
             # Test every movements
             pawn_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             rook_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
@@ -278,6 +303,8 @@ while running:
     # Draws the chessboard
     draw_chessboard()
 
+    # accessible_cells() # Future -> Call when the king moves
+    # pygame.quit()
     # Handle drag and drop
     handle_drag_and_drop()
 
