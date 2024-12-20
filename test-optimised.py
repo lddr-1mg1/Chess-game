@@ -97,6 +97,22 @@ def catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
                 return False  # Can't catch his own piece
     return True
 
+def accessible_cells():
+    for piece_id in pieces_positions:
+        for x_cell in range(8):
+            for y_cell in range(8):
+                if "rook" in pieces_types[piece_id]: # Checks if the piece is a rook
+                    if (x_cell == pieces_positions[piece_id][0] or y_cell == pieces_positions[piece_id][1]) and is_path_clear(pieces_positions[piece_id][0], pieces_positions[piece_id][1], x_cell, y_cell):
+                        accessibles_cells.append([x_cell, y_cell])
+                elif "knight" in pieces_types[piece_id]:
+                    if  ((abs(x_cell - pieces_positions[piece_id][0]) == 2 and abs(y_cell - pieces_positions[piece_id][1]) == 1) or
+                            (abs(x_cell - pieces_positions[piece_id][0]) == 1 and abs(y_cell - pieces_positions[piece_id][1]) == 2)):
+                        accessibles_cells.append([x_cell, y_cell])
+                y_cell += 1
+            x_cell += 1
+    
+    print(accessibles_cells)
+
 def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "Pawn" not in pieces_types[piece_id]:
         return
@@ -122,24 +138,6 @@ def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
             if position == target_position and pieces_colors[target_id] != pieces_colors[piece_id]:
                 move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
                 return
-
-
-def accessible_cells():
-    for piece_id in pieces_positions:
-        for x_cell in range(8):
-            for y_cell in range(8):
-                if "rook" in pieces_types[piece_id]: # Checks if the piece is a rook
-                    if (x_cell == pieces_positions[piece_id][0] or y_cell == pieces_positions[piece_id][1]) and is_path_clear(pieces_positions[piece_id][0], pieces_positions[piece_id][1], x_cell, y_cell):
-                        accessibles_cells.append([x_cell, y_cell])
-                elif "knight" in pieces_types[piece_id]:
-                    if  ((abs(x_cell - pieces_positions[piece_id][0]) == 2 and abs(y_cell - pieces_positions[piece_id][1]) == 1) or
-                            (abs(x_cell - pieces_positions[piece_id][0]) == 1 and abs(y_cell - pieces_positions[piece_id][1]) == 2)):
-                        accessibles_cells.append([x_cell, y_cell])
-                y_cell += 1
-            x_cell += 1
-    
-    print(accessibles_cells)
-
 
 def rook_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "rook" not in pieces_types[piece_id]: # Checks if the piece is a rook
