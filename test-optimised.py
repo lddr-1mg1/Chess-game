@@ -46,6 +46,9 @@ def draw_piece(piece_id, piece_x_position, piece_y_position):
     grid_y_position = (piece_y_position * square_size) + (square_size - piece_image.get_width()) // 2 # Get tje correct row
     screen.blit(piece_image, (grid_x_position, grid_y_position)) # Display the piece on the screen
 
+def is_within_board(x, y):
+    return 0 <= x < 8 and 0 <= y < 8
+
 def can_move(piece_id):
     piece_color = pieces_colors[piece_id] 
     return piece_color == current_player # Verifies if it the player's turn
@@ -76,14 +79,13 @@ def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_positio
                 return
 
         # Move the piece
-        pieces_positions[piece_id] = [new_piece_x_position, new_piece_y_position]
-        global current_player
+        if is_within_board(new_piece_x_position, new_piece_y_position):
+            pieces_positions[piece_id] = [new_piece_x_position, new_piece_y_position]
+            global current_player
 
-        if (new_piece_x_position, new_piece_y_position) != (piece_x_position, piece_y_position):  # If the new cell is not the same with the current cell
-            current_player = "Black" if current_player == "White" else "White"  # Change player
-            pieces_moves[piece_id] = pieces_moves[piece_id] + 1  # Add one move to the piece
-
-        print(pieces_moves[piece_id])
+            if (new_piece_x_position, new_piece_y_position) != (piece_x_position, piece_y_position):  # If the new cell is not the same with the current cell
+                current_player = "Black" if current_player == "White" else "White"  # Change player
+                pieces_moves[piece_id] = pieces_moves[piece_id] + 1  # Add one move to the piece
         
 def catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
     new_piece_position = [new_piece_x_position, new_piece_y_position]
@@ -298,17 +300,18 @@ def handle_drag_and_drop():
         if dragging_piece: # Check if a piece is beeing dragged
             new_piece_x_position, new_piece_y_position = mouse_x_coordinate // square_size, mouse_y_coordinate // square_size # Set the new coordinates into a square
 
-            piece_x_position, piece_y_position = pieces_positions[dragging_piece]
+            if is_within_board(new_piece_x_position, new_piece_y_position):
+                piece_x_position, piece_y_position = pieces_positions[dragging_piece]
             
-            # Test every movements
-            pawn_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
-            rook_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
-            knight_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
-            bishop_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
-            queen_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
-            king_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
+                # Test every movements
+                pawn_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
+                rook_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
+                knight_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
+                bishop_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
+                queen_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
+                king_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
-            check_promotion(dragging_piece, new_piece_y_position)
+                check_promotion(dragging_piece, new_piece_y_position)
 
             dragging_piece = None
 
