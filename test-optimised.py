@@ -32,7 +32,7 @@ for piece in pieces["pieces"]:
     piece_image = pygame.image.load(piece["image"]) # Get the image path
     pieces_images[piece_id] = pygame.transform.scale(piece_image, (square_size, square_size)) # Transform image to the right size and add it into pieces_image dictionary
 
-# Draws a chess grid by coloring every other square. 
+# Draws a chess grid by coloring every squares. 
 def draw_chessboard():
     for row in range(8):
         for col in range(8):
@@ -173,7 +173,7 @@ def promote_piece(piece_id, piece_color):
 
     def draw_promotion_screen():
         # Charger et redimensionner l'image de fond
-        bg = pygame.image.load("blured_background.jpg")
+        bg = pygame.image.load("./images/blured_background.jpg")
         bg = pygame.transform.scale(bg, (screen_width, screen_width))
         screen.blit(bg, (0, 0))
         
@@ -208,6 +208,7 @@ def promote_piece(piece_id, piece_color):
     running = True
     choice = None
     while running:
+        global button_rect
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -216,7 +217,6 @@ def promote_piece(piece_id, piece_color):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 for i, option in enumerate(options):
-                    button_rect = pygame.Rect(20 + i * 170, 300, 150, 100)
                     if button_rect.collidepoint(mouse_x, mouse_y):
                         choice = option
                         running = False
