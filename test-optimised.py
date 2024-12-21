@@ -97,17 +97,37 @@ def catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
                 return False  # Can't catch his own piece
     return True
 
-def accessible_cells():
+def accessible_cells(color):
     for piece_id in pieces_positions:
-        for x_cell in range(8):
-            for y_cell in range(8):
-                if "rook" in pieces_types[piece_id]: # Checks if the piece is a rook
-                    if (x_cell == pieces_positions[piece_id][0] or y_cell == pieces_positions[piece_id][1]) and is_path_clear(pieces_positions[piece_id][0], pieces_positions[piece_id][1], x_cell, y_cell):
-                        accessibles_cells.append([x_cell, y_cell])
-                elif "knight" in pieces_types[piece_id]:
-                    if  ((abs(x_cell - pieces_positions[piece_id][0]) == 2 and abs(y_cell - pieces_positions[piece_id][1]) == 1) or
+        if pieces_colors[piece_id] != color: # prend en compte que les pièce de la couleur donnée
+            for x_cell in range(8):
+                for y_cell in range(8):
+                    if "rook" in pieces_types[piece_id]: # Checks if the piece is a rook
+                        if (x_cell == pieces_positions[piece_id][0] or y_cell == pieces_positions[piece_id][1]) and is_path_clear(pieces_positions[piece_id][0], pieces_positions[piece_id][1], x_cell, y_cell):
+                            accessibles_cells.append([x_cell, y_cell])
+                
+                    elif "knight" in pieces_types[piece_id]:
+                        if  ((abs(x_cell - pieces_positions[piece_id][0]) == 2 and abs(y_cell - pieces_positions[piece_id][1]) == 1) or
                             (abs(x_cell - pieces_positions[piece_id][0]) == 1 and abs(y_cell - pieces_positions[piece_id][1]) == 2)):
-                        accessibles_cells.append([x_cell, y_cell])
+                            accessibles_cells.append([x_cell, y_cell])
+                
+                    elif "bishop" in pieces_positions[piece_id]:
+                        if (abs(x_cell - pieces_positions[piece_id][0]) == abs(pieces_positions[piece_id][0]) and is_path_clear(pieces_positions[piece_id][0], pieces_positions[piece_id][1], x_cell, y_cell)):
+                            accessibles_cells.append([x_cell, y_cell])
+                
+                    elif "queen" in pieces_positions[piece_id]:
+                        if (((abs(x_cell - pieces_positions[piece_id][0]) == abs(pieces_positions[piece_id][0])) or (x_cell == pieces_positions[piece_id][0] or y_cell == pieces_positions[piece_id][1])) and is_path_clear(pieces_positions[piece_id][0], pieces_positions[piece_id][1], x_cell, y_cell)):
+                            accessibles_cells.append([x_cell, y_cell])
+                    
+                    elif "king" in pieces_positions[piece_id]:
+                        if ((abs(x_cell - pieces_positions[piece_id][0]) <= 1 and abs(y_cell - pieces_positions[piece_id][1]) <= 1) and is_path_clear(pieces_positions[piece_id][0], pieces_positions[piece_id][1], x_cell, y_cell)):
+                            accessibles_cells.append([x_cell, y_cell])
+                
+                    elif "pawn" in pieces_positions[piece_id]:
+                        direction = 1 if color == "white" else -1
+                        if ((x_cell - pieces_positions[piece_id][0] == -1 or x_cell - pieces_positions[piece_id][0] == -1) and pieces_positions[piece_id][1] == y_cell + direction):
+                            accessibles_cells.append([x_cell, y_cell])
+                
                 y_cell += 1
             x_cell += 1
     
@@ -211,10 +231,12 @@ def promote_piece(piece_id, piece_color):
         start_x = (screen_width - total_buttons_width) // 2  # Point de départ pour centrer les boutons horizontalement
         button_y = screen_width // 2  # Position verticale des boutons
         
+        button_rects = []
         for i, option in enumerate(options):
             # Calculer la position de chaque bouton
             button_x = start_x + i * (button_width + 20)
             button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+            button_rects.append(button_rect)
 
             # Dessiner les boutons avec des bords arrondis
             pygame.draw.rect(screen, pygame.Color("#FFFFFF"), button_rect, border_radius=15)
@@ -223,15 +245,16 @@ def promote_piece(piece_id, piece_color):
             option_text = font.render(option.split('_')[1], True, pygame.Color("#000000"))
             text_rect = option_text.get_rect(center=button_rect.center)
             screen.blit(option_text, text_rect)
-        
+    
         # Rafraîchir l'affichage
         pygame.display.flip()
+        return button_rects
 
-
+    button_rects = draw_promotion_screen() # afficher l'ecran une seule fois
+    
     running = True
     choice = None
     while running:
-        global button_rect
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -239,12 +262,11 @@ def promote_piece(piece_id, piece_color):
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                for i, option in enumerate(options):
+                for i, button_rect in enumerate(button_rects):
                     if button_rect.collidepoint(mouse_x, mouse_y):
-                        choice = option
+                        choice = options[i]
                         running = False
 
-        draw_promotion_screen()
 
     pieces_types[piece_id] = choice
     image_path = f"./images/{choice}_png_shadow_512px.png"
@@ -253,7 +275,8 @@ def promote_piece(piece_id, piece_color):
     draw_chessboard()
     for piece_name, (piece_x, piece_y) in pieces_positions.items():
         draw_piece(piece_name, piece_x, piece_y)
-#     pygame.display.flip()
+ 
+    pygame.display.flip()
 
 def handle_drag_and_drop():
     global dragging_piece
@@ -301,7 +324,7 @@ while running:
     # Draws the chessboard
     draw_chessboard()
 
-    # accessible_cells() # Future -> Call when the king moves
+    #accessible_cells() # Future -> Call when the king moves
     # pygame.quit()
     # Handle drag and drop
     handle_drag_and_drop()
