@@ -144,7 +144,6 @@ def promote_piece(piece_id, piece_color):
     pygame.display.flip() # reaffiche les changement à l'ecran
 
 
-        
 def check_promotion(piece_type, piece_position, piece_id):
     if piece_type == "White_Pawn" and piece_position[1] == 7:
         promote_piece(piece_id, "White")
