@@ -351,6 +351,8 @@ def handle_drag_and_drop():
 # Initialize Pygame 
 pygame.init()            
 
+clock = pygame.time.Clock()
+
 while running:
     # Prevents from crashing
     for event in pygame.event.get(): 
@@ -377,6 +379,7 @@ while running:
     
     # Display the window 
     pygame.display.flip()
+    clock.tick(30)
 
 # Quit Pygame
 pygame.quit()
