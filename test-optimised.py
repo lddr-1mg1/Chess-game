@@ -114,6 +114,7 @@ def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_positio
             pieces_positions[piece_id] = [new_piece_x_position, new_piece_y_position]
             global current_player
             if (new_piece_x_position, new_piece_y_position) != (piece_x_position, piece_y_position):
+                check_promotion(piece_id, new_piece_y_position) # Check if the piece can be promoted
                 current_player = "Black" if current_player == "White" else "White" # Changes player turn
                 pieces_moves[piece_id] += 1 # Add one move to the piece
 
@@ -332,7 +333,6 @@ def handle_drag_and_drop():
             bishop_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             queen_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             king_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
-            check_promotion(dragging_piece, new_piece_y_position)
 
             white_king_position = pieces_positions[8]
             black_king_position = pieces_positions[24]
