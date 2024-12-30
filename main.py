@@ -145,9 +145,9 @@ def promote_piece(piece_id, piece_color):
 
 
 def check_promotion(piece_type, piece_position, piece_id):
-    if piece_type == "White_Pawn" and piece_position[1] == 7:
+    if piece_type == "White_pawn" and piece_position[1] == 7:
         promote_piece(piece_id, "White")
-    elif piece_type == "Black_Pawn" and piece_position[1] == 0:
+    elif piece_type == "Black_pawn" and piece_position[1] == 0:
         promote_piece(piece_id, "Black")
 
 
@@ -197,7 +197,7 @@ def handle_drag_and_drop():
                     initial_position = piece_settings["position"]
 
                     is_allowed = False
-                    if piece_type == "Black_Pawn":
+                    if piece_type == "Black_pawn":
                         allowed_x_moves = [0]
                         allowed_x_catching_moves = [-1, 1]
                         allowed_y_catching_moves = [1]
@@ -218,7 +218,7 @@ def handle_drag_and_drop():
                             if not any([new_x, new_y] == position for position in pieces_positions.values()):  # Case libre
                                 is_allowed = True
 
-                    elif piece_type == "White_Pawn":
+                    elif piece_type == "White_pawn":
                         allowed_x_moves = [0]
                         allowed_x_catching_moves = [-1, 1]
                         allowed_y_catching_moves = [-1]
@@ -263,7 +263,7 @@ def handle_drag_and_drop():
                         if (((actual_position[0] - new_x in allowed_x_moves) and (actual_position[1] - new_y == 0)) or ((actual_position[0] - new_x == 0) and (actual_position[1] - new_y in allowed_y_moves))) or abs(actual_position[0] - new_x) == abs(actual_position[1] - new_y):
                             is_allowed = True
 
-                    elif piece_type == "King":
+                    elif piece_type == "king":
                         allowed_x_moves = [-1, 0, 1]
 
                         allowed_y_moves = [-1, 0, 1]

@@ -38,8 +38,6 @@ for piece in pieces["pieces"]:
     pieces_images[piece_id] = pygame.transform.scale(img, (square_size, square_size)) # Scales the image to fit into a cell.
 
 positions_already_have = [] # I dont know what this is for
-white_king_position = pieces_positions[8]
-black_king_position = pieces_positions[24]
 
 # Draw the chess boeard
 def draw_chessboard():
@@ -123,11 +121,10 @@ def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_positio
 def accessible_cells(color):
     accessibles_cells = []
     for piece_id in pieces_positions:
-        # On veut les pièces de la couleur passée (c.-à-d. celles qui attaquent)
         if pieces_colors[piece_id] == color:
             piece_x_position, piece_y_position = pieces_positions[piece_id]
             piece_type = pieces_types[piece_id]
-
+            # Basicaly the same code as the differents pieces movement functions. Could be optimized.
             if "rook" in piece_type:
                 for x_cell in range(8):
                     for y_cell in range(8):
@@ -150,29 +147,25 @@ def accessible_cells(color):
             elif "queen" in piece_type:
                 for x_cell in range(8):
                     for y_cell in range(8):
-                        # diagonale ou ligne/colonne
                         if (abs(x_cell - piece_x_position) == abs(y_cell - piece_y_position) or x_cell == piece_x_position or y_cell == piece_y_position):
                             if is_path_clear(piece_x_position, piece_y_position, x_cell, y_cell):
                                 accessibles_cells.append([x_cell, y_cell])
-            # Need to comment this part (and modify some)
+            
             elif "pawn" in piece_type:
-                direction = 1 if color == "White" else -1
-                for dx in [-1, 1]:
-                    nx = piece_x_position + dx
-                    ny = piece_y_position + direction
-                    if 0 <= nx < 8 and 0 <= ny < 8:
-                        if [nx, ny] in pieces_positions.values():
-                            accessibles_cells.append([nx, ny])
+                direction = -1 if "Black_pawn" in piece_type else 1
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        if abs(x_cell - piece_x_position) == 1 and (y_cell - piece_y_position) == direction:
+                            if [x_cell, y_cell] in pieces_positions.values():
+                                for target_id, pos in pieces_positions.items():
+                                    if pos == [x_cell, y_cell] and pieces_colors[target_id] != color:
+                                        accessibles_cells.append([x_cell, y_cell])
 
             elif "king" in piece_type:
-                for dx in [-1, 0, 1]:
-                    for dy in [-1, 0, 1]:
-                        if dx == 0 and dy == 0:
-                            continue
-                        nx = piece_x_position + dx
-                        ny = piece_y_position + dy
-                        if 0 <= nx < 8 and 0 <= ny < 8:
-                            accessibles_cells.append([nx, ny])
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        if abs(x_cell - piece_x_position) <= 1 and abs(y_cell - piece_y_position) <= 1:
+                            accessibles_cells.append([x_cell, y_cell])
 
     return accessibles_cells
 
@@ -182,10 +175,10 @@ def is_king_checked(king_position, king_color):
     return king_position in accessible_cells(opponent_color)
 
 def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-    if "Pawn" not in pieces_types[piece_id]: # Checks if the piece is a pawn
+    if "pawn" not in pieces_types[piece_id]: # Checks if the piece is a pawn
         return
     
-    direction = -1 if "Black_Pawn" in pieces_types[piece_id] else 1 # Checks the color of the pawn and set the direction (-1, 1)
+    direction = -1 if "Black_pawn" in pieces_types[piece_id] else 1 # Checks the color of the pawn and set the direction (-1, 1)
     steps = [1, 2] if pieces_moves[piece_id] == 0 else [1] # If the pawn has not moved it can advance by two cells 
     allowed_moves = [(piece_x_position, piece_y_position + direction * step) for step in steps] # Sets the allowed moves
     diagonal_captures = [(piece_x_position - 1, piece_y_position + direction), (piece_x_position + 1, piece_y_position + direction)] # Set the allowed diagnoal moves for capturing
@@ -198,9 +191,9 @@ def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
     
     # Checks if the pawn can catch another piece.
     if (new_piece_x_position, new_piece_y_position) in diagonal_captures:
-        target_position = [new_piece_x_position, new_piece_y_position]
+        new_piece_position = [new_piece_x_position, new_piece_y_position]
         for target_id, position in pieces_positions.items():
-            if position == target_position and pieces_colors[target_id] != pieces_colors[piece_id]:
+            if position == new_piece_position and pieces_colors[target_id] != pieces_colors[piece_id]:
                 move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
                 return
 
@@ -235,7 +228,7 @@ def queen_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_pos
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position) 
 
 def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-    if "King" not in pieces_types[piece_id]: # Checks if the piece is a king
+    if "king" not in pieces_types[piece_id]: # Checks if the piece is a king
         return
     # Checks king if movement is for the king.
     if not (abs(new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1):
@@ -245,9 +238,9 @@ def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
 # Checks if the piece arrives all on the last line (for its color) of the chess board
 def check_promotion(piece_id, piece_y_position):
     piece_type = pieces_types[piece_id]
-    if piece_type == "White_Pawn" and piece_y_position == 7:
+    if piece_type == "White_pawn" and piece_y_position == 7:
         promote_piece(piece_id, "White")
-    elif piece_type == "Black_Pawn" and piece_y_position == 0:
+    elif piece_type == "Black_pawn" and piece_y_position == 0:
         promote_piece(piece_id, "Black")
 
 def promote_piece(piece_id, piece_color):
@@ -322,7 +315,9 @@ def handle_drag_and_drop():
             
             # Gets current dragging piece position
             piece_x_position, piece_y_position = pieces_positions[dragging_piece]
+            
 
+                
             # Checks every possible movements
             pawn_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             rook_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
@@ -331,8 +326,13 @@ def handle_drag_and_drop():
             queen_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             king_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
-            is_king_checked(white_king_position, "White")
-            is_king_checked(black_king_position, "Black")
+            white_king_position = pieces_positions[8]
+            black_king_position = pieces_positions[24]
+
+            if is_king_checked(white_king_position, "White") or is_king_checked(black_king_position, "Black"):
+                print("Check!")
+            else:
+                print("No check!")
 
 
             # No more dragged piece

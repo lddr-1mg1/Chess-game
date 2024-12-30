@@ -58,7 +58,7 @@
         },
         {
             "id": 8,
-            "type": "King",
+            "type": "king",
             "color": "White",
             "position": [3, 0],
             "moves": 0,
@@ -66,7 +66,7 @@
         },
         {
             "id": 9,
-            "type": "White_Pawn",
+            "type": "White_pawn",
             "color": "White",
             "position": [0, 1],
             "moves": 0,
@@ -74,7 +74,7 @@
         },
         {
             "id": 10,
-            "type": "White_Pawn",
+            "type": "White_pawn",
             "color": "White",
             "position": [1, 1],
             "moves": 0,
@@ -82,7 +82,7 @@
         },
         {
             "id": 11,
-            "type": "White_Pawn",
+            "type": "White_pawn",
             "color": "White",
             "position": [2, 1],
             "moves": 0,
@@ -90,7 +90,7 @@
         },
         {
             "id": 12,
-            "type": "White_Pawn",
+            "type": "White_pawn",
             "color": "White",
             "position": [3, 1],
             "moves": 0,
@@ -98,7 +98,7 @@
         },
         {
             "id": 13,
-            "type": "White_Pawn",
+            "type": "White_pawn",
             "color": "White",
             "position": [4, 1],
             "moves": 0,
@@ -106,7 +106,7 @@
         },
         {
             "id": 14,
-            "type": "White_Pawn",
+            "type": "White_pawn",
             "color": "White",
             "position": [5, 1],
             "moves": 0,
@@ -114,7 +114,7 @@
         },
         {
             "id": 15,
-            "type": "White_Pawn",
+            "type": "White_pawn",
             "color": "White",
             "position": [6, 1],
             "moves": 0,
@@ -122,7 +122,7 @@
         },
         {
             "id": 16,
-            "type": "White_Pawn",
+            "type": "White_pawn",
             "color": "White",
             "position": [7, 1],
             "moves": 0,
@@ -186,7 +186,7 @@
         },
         {
             "id": 24,
-            "type": "King",
+            "type": "king",
             "color": "Black",
             "position": [3, 7],
             "moves": 0,
@@ -194,7 +194,7 @@
         },
         {
             "id": 25,
-            "type": "Black_Pawn",
+            "type": "Black_pawn",
             "color": "Black",
             "position": [0, 6],
             "moves": 0,
@@ -202,7 +202,7 @@
         },
         {
             "id": 26,
-            "type": "Black_Pawn",
+            "type": "Black_pawn",
             "color": "Black",
             "position": [1, 6],
             "moves": 0,
@@ -210,7 +210,7 @@
         },
         {
             "id": 27,
-            "type": "Black_Pawn",
+            "type": "Black_pawn",
             "color": "Black",
             "position": [2, 6],
             "moves": 0,
@@ -218,7 +218,7 @@
         },
         {
             "id": 28,
-            "type": "Black_Pawn",
+            "type": "Black_pawn",
             "color": "Black",
             "position": [3, 6],
             "moves": 0,
@@ -226,7 +226,7 @@
         },
         {
             "id": 29,
-            "type": "Black_Pawn",
+            "type": "Black_pawn",
             "color": "Black",
             "position": [4, 6],
             "moves": 0,
@@ -234,7 +234,7 @@
         },
         {
             "id": 30,
-            "type": "Black_Pawn",
+            "type": "Black_pawn",
             "color": "Black",
             "position": [5, 6],
             "moves": 0,
@@ -242,7 +242,7 @@
         },
         {
             "id": 31,
-            "type": "Black_Pawn",
+            "type": "Black_pawn",
             "color": "Black",
             "position": [6, 6],
             "moves": 0,
@@ -250,7 +250,7 @@
         },
         {
             "id": 32,
-            "type": "Black_Pawn",
+            "type": "Black_pawn",
             "color": "Black",
             "position": [7, 6],
             "moves": 0,
