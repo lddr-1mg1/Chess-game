@@ -20,8 +20,6 @@ current_player = "White"
 running = True
 dragging_piece = None
 
-positions_already_have = []
-
 # Pieces settings dictionaries
 pieces_types = {}
 pieces_colors = {}
@@ -38,6 +36,10 @@ for piece in pieces["pieces"]:
     pieces_moves[piece_id] = piece["moves"]
     img = pygame.image.load(piece["image"])
     pieces_images[piece_id] = pygame.transform.scale(img, (square_size, square_size)) # Scales the image to fit into a cell.
+
+positions_already_have = [] # I dont know what this is for
+white_king_position = pieces_positions[8]
+black_king_position = pieces_positions[24]
 
 # Draw the chess boeard
 def draw_chessboard():
@@ -329,8 +331,6 @@ def handle_drag_and_drop():
             queen_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             king_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
-            white_king_position = pieces_positions[8]
-            black_king_position = pieces_positions[24]
             is_king_checked(white_king_position, "White")
             is_king_checked(black_king_position, "Black")
 
