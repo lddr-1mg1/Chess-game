@@ -152,10 +152,8 @@ def accessible_cells(color):
                         if (abs(x_cell - piece_x_position) == abs(y_cell - piece_y_position) or x_cell == piece_x_position or y_cell == piece_y_position):
                             if is_path_clear(piece_x_position, piece_y_position, x_cell, y_cell):
                                 accessibles_cells.append([x_cell, y_cell])
-
+            # Need to comment this part (and modify some)
             elif "pawn" in piece_type:
-                # Les pions menacent en diagonale seulement
-                # On suppose ici que "White" menace (piece_x_position ±1, piece_y_position+1) et "Black" menace (piece_x_position ±1, piece_y_position-1)
                 direction = 1 if color == "White" else -1
                 for dx in [-1, 1]:
                     nx = piece_x_position + dx
@@ -179,10 +177,7 @@ def accessible_cells(color):
 
 def is_king_checked(king_position, king_color):
     opponent_color = "White" if king_color == "Black" else "Black"
-    if king_position in accessible_cells(opponent_color):
-        print("Échec")
-    else:
-        print("Pas d'échec")
+    return king_position in accessible_cells(opponent_color)
 
 def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "Pawn" not in pieces_types[piece_id]: # Checks if the piece is a pawn
