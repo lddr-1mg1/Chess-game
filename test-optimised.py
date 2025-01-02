@@ -169,7 +169,6 @@ def accessible_cells(color):
 
     return accessibles_cells
 
-
 def is_king_checked(king_position, king_color):
     opponent_color = "White" if king_color == "Black" else "Black"
     return king_position in accessible_cells(opponent_color)
@@ -248,6 +247,7 @@ def promote_piece(piece_id, piece_color):
     prefix = "w" if piece_color == "White" else "b"
     options = [f"{prefix}_{option}" for option in options]
     font = pygame.font.Font(None, screen_width // 12)
+    
     def draw_promotion_screen():
         bg = pygame.image.load("./images/blured_background.jpg")
         bg = pygame.transform.scale(bg, (screen_width, screen_width))
@@ -315,9 +315,7 @@ def handle_drag_and_drop():
             
             # Gets current dragging piece position
             piece_x_position, piece_y_position = pieces_positions[dragging_piece]
-            
-
-                
+        
             # Checks every possible movements
             pawn_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             rook_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
