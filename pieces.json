@@ -50,7 +50,7 @@
         },
         {
             "id": 7,
-            "type": "w_queen",
+            "type": "w_quee",
             "color": "White",
             "position": [4, 0],
             "moves": 0,
@@ -58,7 +58,7 @@
         },
         {
             "id": 8,
-            "type": "king",
+            "type": "b_king",
             "color": "White",
             "position": [3, 0],
             "moves": 0,
@@ -186,7 +186,7 @@
         },
         {
             "id": 24,
-            "type": "king",
+            "type": "w_king",
             "color": "Black",
             "position": [3, 7],
             "moves": 0,
