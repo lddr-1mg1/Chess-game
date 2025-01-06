@@ -50,7 +50,7 @@
         },
         {
             "id": 7,
-            "type": "w_quee",
+            "type": "w_queen",
             "color": "White",
             "position": [4, 0],
             "moves": 0,
