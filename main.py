@@ -9,7 +9,7 @@ with open("pieces.json") as f:
 pygame.init()
 
 # Display settings
-screen_width = 1000 
+screen_width = 500 
 square_size = screen_width // 8 
 light_square_color = "#d5c9bb"
 dark_square_color = "#b2a696"
@@ -269,17 +269,18 @@ def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
     if "king" not in pieces_types[piece_id]: # Checks if the piece is a king
         return
     
-    if (pieces_moves[8] == 0 and pieces_moves[1] == 0) or (pieces_moves[24] == 0 and pieces_moves[17] == 0):
-        if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 0 and (new_piece_y_position - piece_y_position) <= 1:
-            return
+    if (pieces_moves[8] == 0 and pieces_moves[1] == 0) or (pieces_moves[24] == 0 and pieces_moves[17] == 0) and not ((new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 0 and (new_piece_y_position - piece_y_position) <= 1):
+        return
     
     elif (pieces_moves[8] == 0 and pieces_moves[2] == 0):
         if is_cell_occuped(6, 0) is False:
+            print("ICI")
             if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
                 return
     
     elif (pieces_moves[24] == 0 and pieces_moves[18] == 0) and is_cell_occuped(6, 7) is False:
         if is_cell_occuped(6, 7) is False:
+            print("LA")
             if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
                 return
     
