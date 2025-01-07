@@ -179,10 +179,33 @@ def is_king_checked(king_position, king_color):
     opponent_color = "White" if king_color == "Black" else "Black"
     return king_position in accessible_cells(opponent_color)
 
+def get_piece_id_by_position(position):
+    for piece_id, piece in pieces_positions.items():
+        if piece["position"] == position:
+            return piece_id
+
+def is_prise_en_passant_legit(pawn_position):
+    positions_x_next_to_pawn = [pawn_position[0] + 1, pawn_position[0] - 1]
+    positions_next_to_pawn = ([positions_x_next_to_pawn[0], pawn_position[1]],[positions_x_next_to_pawn[1], pawn_position[1]])
+    for position in pieces_positions.values():
+        print("oui 1")
+        if position == positions_next_to_pawn[0] or positions_next_to_pawn[1]:
+            print("oui 2")
+            get_piece_id_by_position(position)
+            if pieces_types[piece_id] == "Black_pawn" or pieces_types[piece_id] == "White_pawn":
+                print("oui 3")
+                if pieces_moves[piece_id] == 1:
+                    print("oui")
+            
+
+
+
+
 def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "pawn" not in pieces_types[piece_id]: # Checks if the piece is a pawn
         return
     
+    is_prise_en_passant_legit(pieces_positions[dragging_piece])
     direction = -1 if "Black_pawn" in pieces_types[piece_id] else 1 # Checks the color of the pawn and set the direction (-1, 1)
     steps = [1, 2] if pieces_moves[piece_id] == 0 else [1] # If the pawn has not moved it can advance by two cells 
     allowed_moves = [(piece_x_position, piece_y_position + direction * step) for step in steps] # Sets the allowed moves
