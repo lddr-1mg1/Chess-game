@@ -53,7 +53,6 @@ def draw_piece(piece_id, piece_x_position, piece_y_position):
     grid_y_position = (piece_y_position * square_size) + (square_size - piece_image.get_height()) // 2 # Calculates the correct y-axis position
     screen.blit(piece_image, (grid_x_position, grid_y_position)) # Shows the piece
 
-# I don't fucking care about this shit that doesn't work !!!
 def draw_by_repitition():
     immutable_positions = tuple(sorted((pid, tuple(pos)) for pid, pos in pieces_positions.items()))
     positions_already_have.append(immutable_positions)
@@ -76,8 +75,6 @@ def is_cell_occuped(x, y):
            return True
     return False
  
-
-
 def can_move(piece_id):
     return pieces_colors[piece_id] == current_player # Checks if the right player is playing 
 
@@ -98,24 +95,6 @@ def is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_
         movement_x += distance_x
         movement_y += distance_y
     return True
-
-def little_castle(position_of_the_king):
-    if pieces_moves[8] == 1:
-        if position_of_the_king == [1, 0]:
-            pieces_positions[1] = [2, 0] # change la position de la tour      
-    elif pieces_moves[24] == 1:
-        if position_of_the_king == [1, 7]:
-            pieces_positions[17] = [2, 7] # change la position de la tour
-
-def big_castle(position_of_the_king):
-    if pieces_moves[8] == 1:
-        if position_of_the_king == [5, 0]:
-            pieces_positions[2] = [4, 0] # change la position de la tour      
-            print(is_cell_occuped(6, 0))
-
-    if pieces_moves[24] == 1:
-        if position_of_the_king == [5, 7]:
-            pieces_positions[18] = [4, 7] # change la position de la tour
 
 def catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
     # Assembles the new positions variables in an array
@@ -258,31 +237,44 @@ def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
         return
     
     if (pieces_moves[8] == 0 and pieces_moves[1] == 0) or (pieces_moves[24] == 0 and pieces_moves[17] == 0):
-        print("Encore la")
-        print(new_piece_x_position - piece_x_position)
         if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
-            print("tgrgtr")
             return
     
     elif (pieces_moves[8] == 0 and pieces_moves[2] == 0):
-        print(is_cell_occuped(6, 0) is False)
         if is_cell_occuped(6, 0) is False:
-            print("ICI")
             if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
                 return
     
     elif (pieces_moves[24] == 0 and pieces_moves[18] == 0) and is_cell_occuped(6, 7) is False:
         if is_cell_occuped(6, 7) is False:
-            print("LA")
             if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
                 return
     
     # Checks king if movement is for the king.
     elif not (abs(new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1):
         return
+    
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
     little_castle(pieces_positions[dragging_piece])
     big_castle(pieces_positions[dragging_piece])
+
+def little_castle(position_of_the_king):
+    if pieces_moves[8] == 1:
+        if position_of_the_king == [1, 0]:
+            pieces_positions[1] = [2, 0] # change la position de la tour      
+    elif pieces_moves[24] == 1:
+        if position_of_the_king == [1, 7]:
+            pieces_positions[17] = [2, 7] # change la position de la tour
+
+def big_castle(position_of_the_king):
+    if pieces_moves[8] == 1:
+        if position_of_the_king == [5, 0]:
+            pieces_positions[2] = [4, 0] # change la position de la tour      
+            print(is_cell_occuped(6, 0))
+
+    if pieces_moves[24] == 1:
+        if position_of_the_king == [5, 7]:
+            pieces_positions[18] = [4, 7] # change la position de la tour
 
 # Checks if the piece arrives all on the last line (for its color) of the chess board
 def check_promotion(piece_id, piece_y_position):
