@@ -96,34 +96,6 @@ def is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_
         movement_y += distance_y
     return True
 
-def little_castle(position_of_the_king):
-    if pieces_moves[8] == 1:
-        if position_of_the_king == [1, 0]:
-            pieces_positions[1] = [2, 0] # change la position de la tour      
-    elif pieces_moves[24] == 1:
-        if position_of_the_king == [1, 7]:
-            pieces_positions[17] = [2, 7] # change la position de la tour
-
-        draw_chessboard()
-        for piece_name, (piece_x, piece_y) in pieces_positions.items():
-            draw_piece(piece_name, piece_x, piece_y)
-        pygame.display.flip()
-
-def big_castle(position_of_the_king):
-    if pieces_moves[8] == 1:
-        if position_of_the_king == [5, 0]:
-            pieces_positions[2] = [4, 0] # change la position de la tour      
-
-    if pieces_moves[24] == 1:
-        if position_of_the_king == [5, 7]:
-            pieces_positions[18] = [4, 7] # change la position de la tour
-
-        draw_chessboard()
-        for piece_name, (piece_x, piece_y) in pieces_positions.items():
-            draw_piece(piece_name, piece_x, piece_y)
-        pygame.display.flip()
-
-
 def catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
     # Assembles the new positions variables in an array
     new_piece_position = [new_piece_x_position, new_piece_y_position] 
