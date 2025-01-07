@@ -236,7 +236,14 @@ def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
     if "king" not in pieces_types[piece_id]: # Checks if the piece is a king
         return
     
-    if not is_king_checked([piece_x_position, piece_y_position], pieces_colors[piece_id]):
+    illegal_check_cells = [[piece_x_position, piece_y_position], [0, 1], [0, 2], [0, 4], [0, 5], [7, 1], [7, 2], [7, 4], [7, 5]] # Potiential castle move cells
+
+    for cell in illegal_check_cells:
+        print(cell)
+        if is_cell_checked(cell, "White"):
+            print("Cell est checked")
+
+    if not is_cell_checked([piece_x_position, piece_y_position], pieces_colors[piece_id]):
         if (((pieces_moves[8] == 0 and pieces_moves[1] == 0) or (pieces_moves[24] == 0 and pieces_moves[17] == 0)) and new_piece_x_position == 1):
             if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
                 return
@@ -369,7 +376,7 @@ def handle_drag_and_drop():
             white_king_position = pieces_positions[8]
             black_king_position = pieces_positions[24]
 
-            if is_cell_checked(white_king_position) or is_cell_checked(black_king_position):
+            if is_cell_checked(white_king_position, "White") or is_cell_checked(black_king_position, "Black"):
                 print("Check!")
             else:
                 print("No check!")
