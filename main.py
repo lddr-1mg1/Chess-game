@@ -53,7 +53,6 @@ def draw_piece(piece_id, piece_x_position, piece_y_position):
     grid_y_position = (piece_y_position * square_size) + (square_size - piece_image.get_height()) // 2 # Calculates the correct y-axis position
     screen.blit(piece_image, (grid_x_position, grid_y_position)) # Shows the piece
 
-# I don't fucking care about this shit that doesn't work !!!
 def draw_by_repitition():
     immutable_positions = tuple(sorted((pid, tuple(pos)) for pid, pos in pieces_positions.items()))
     positions_already_have.append(immutable_positions)
@@ -76,8 +75,6 @@ def is_cell_occuped(x, y):
            return True
     return False
  
-
-
 def can_move(piece_id):
     return pieces_colors[piece_id] == current_player # Checks if the right player is playing 
 
@@ -293,6 +290,24 @@ def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
     little_castle(pieces_positions[dragging_piece])
     big_castle(pieces_positions[dragging_piece])
 
+def little_castle(position_of_the_king):
+    if pieces_moves[8] == 1:
+        if position_of_the_king == [1, 0]:
+            pieces_positions[1] = [2, 0] # change la position de la tour      
+    elif pieces_moves[24] == 1:
+        if position_of_the_king == [1, 7]:
+            pieces_positions[17] = [2, 7] # change la position de la tour
+
+def big_castle(position_of_the_king):
+    if pieces_moves[8] == 1:
+        if position_of_the_king == [5, 0]:
+            pieces_positions[2] = [4, 0] # change la position de la tour      
+            print(is_cell_occuped(6, 0))
+
+    if pieces_moves[24] == 1:
+        if position_of_the_king == [5, 7]:
+            pieces_positions[18] = [4, 7] # change la position de la tour
+
 # Checks if the piece arrives all on the last line (for its color) of the chess board
 def check_promotion(piece_id, piece_y_position):
     piece_type = pieces_types[piece_id]
@@ -346,10 +361,6 @@ def promote_piece(piece_id, piece_color):
     pieces_types[piece_id] = choice
     image_path = f"./images/{choice}_png_shadow_512px.png"
     pieces_images[piece_id] = pygame.transform.scale(pygame.image.load(image_path), (square_size, square_size))
-    draw_chessboard()
-    for piece_name, (piece_x, piece_y) in pieces_positions.items():
-        draw_piece(piece_name, piece_x, piece_y)
-    pygame.display.flip()
 
 def handle_drag_and_drop():
     global dragging_piece
