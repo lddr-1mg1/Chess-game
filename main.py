@@ -175,9 +175,9 @@ def accessible_cells(color):
 
     return accessibles_cells
 
-def is_king_checked(king_position, king_color):
-    opponent_color = "White" if king_color == "Black" else "Black"
-    return king_position in accessible_cells(opponent_color)
+def is_cell_checked(cell_position, target_color):
+    opponent_color = "White" if target_color == "Black" else "Black"
+    return cell_position in accessible_cells(opponent_color) 
 
 def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "pawn" not in pieces_types[piece_id]: # Checks if the piece is a pawn
@@ -365,7 +365,7 @@ def handle_drag_and_drop():
             white_king_position = pieces_positions[8]
             black_king_position = pieces_positions[24]
 
-            if is_king_checked(white_king_position, "White") or is_king_checked(black_king_position, "Black"):
+            if is_cell_checked(white_king_position) or is_cell_checked(black_king_position):
                 print("Check!")
             else:
                 print("No check!")
