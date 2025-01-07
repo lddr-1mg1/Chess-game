@@ -9,7 +9,7 @@ with open("pieces.json") as f:
 pygame.init()
 
 # Display settings
-screen_width = 500 
+screen_width = 1000 
 square_size = screen_width // 8 
 light_square_color = "#d5c9bb"
 dark_square_color = "#b2a696"
@@ -179,33 +179,32 @@ def is_cell_checked(cell_position, target_color):
     opponent_color = "White" if target_color == "Black" else "Black"
     return cell_position in accessible_cells(opponent_color) 
 
-def get_piece_id_by_position(position):
-    for piece_id, piece in pieces_positions.items():
-        if piece["position"] == position:
-            return piece_id
-
-def is_prise_en_passant_legit(pawn_position):
-    positions_x_next_to_pawn = [pawn_position[0] + 1, pawn_position[0] - 1]
-    positions_next_to_pawn = ([positions_x_next_to_pawn[0], pawn_position[1]],[positions_x_next_to_pawn[1], pawn_position[1]])
-    for position in pieces_positions.values():
-        print("oui 1")
-        if position == positions_next_to_pawn[0] or positions_next_to_pawn[1]:
-            print("oui 2")
-            get_piece_id_by_position(position)
-            if pieces_types[piece_id] == "Black_pawn" or pieces_types[piece_id] == "White_pawn":
-                print("oui 3")
-                if pieces_moves[piece_id] == 1:
-                    print("oui")
-            
-
-
-
+def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_position):
+    pawn_position = pieces_positions[pawn_id]
+    pawn_color = pieces_colors[pawn_id]
+    direction = 1 if pawn_color == "White" else -1
+    
+    if (new_piece_x_position, new_piece_y_position) in [
+        (pawn_position[0] + 1, pawn_position[1] + direction),
+        (pawn_position[0] - 1, pawn_position[1] + direction)
+    ]: # Vérifie si la case ciblée est une case de prise en passant
+    
+        adjacents_positions = [
+            (pawn_position[0] + 1, pawn_position[1]),
+            (pawn_position[0] - 1, pawn_position[1])
+        ]
+        for adj_x, adj_y in adjacents_positions:
+            for target_id, target_position in pieces_positions.items():
+                if target_position == [adj_x, adj_y] and pieces_types[target_id] in {"Black_pawn", "White_pawn"}: # vérifie que la position et que se soit un pion
+                    if pieces_colors[target_id] != pawn_color and pieces_moves[target_id] == 1: # verifie la couleur et que le pion n'a bougé qu'une seul fois
+                        del pieces_positions[target_id] # supprime le pion
+                        return True
+    return False          
 
 def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "pawn" not in pieces_types[piece_id]: # Checks if the piece is a pawn
         return
     
-    is_prise_en_passant_legit(pieces_positions[dragging_piece])
     direction = -1 if "Black_pawn" in pieces_types[piece_id] else 1 # Checks the color of the pawn and set the direction (-1, 1)
     steps = [1, 2] if pieces_moves[piece_id] == 0 else [1] # If the pawn has not moved it can advance by two cells 
     allowed_moves = [(piece_x_position, piece_y_position + direction * step) for step in steps] # Sets the allowed moves
@@ -224,6 +223,12 @@ def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
             if position == new_piece_position and pieces_colors[target_id] != pieces_colors[piece_id]:
                 move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
                 return
+
+    # cheks if the pawn can take " en passant"
+    if is_prise_en_passant_legit(piece_id, new_piece_x_position, new_piece_y_position):
+        move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
+
+
 
 def rook_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "rook" not in pieces_types[piece_id]: # Checks if the piece is a rook
