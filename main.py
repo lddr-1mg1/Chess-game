@@ -107,11 +107,6 @@ def little_castle(position_of_the_king):
         if position_of_the_king == [1, 7]:
             pieces_positions[17] = [2, 7] # change la position de la tour
 
-        draw_chessboard()
-        for piece_name, (piece_x, piece_y) in pieces_positions.items():
-            draw_piece(piece_name, piece_x, piece_y)
-        pygame.display.flip()
-
 def big_castle(position_of_the_king):
     if pieces_moves[8] == 1:
         if position_of_the_king == [5, 0]:
@@ -121,13 +116,6 @@ def big_castle(position_of_the_king):
     if pieces_moves[24] == 1:
         if position_of_the_king == [5, 7]:
             pieces_positions[18] = [4, 7] # change la position de la tour
-            print(is_cell_occuped(6, 7))
-
-        draw_chessboard()
-        for piece_name, (piece_x, piece_y) in pieces_positions.items():
-            draw_piece(piece_name, piece_x, piece_y)
-        pygame.display.flip()
-
 
 def catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
     # Assembles the new positions variables in an array
@@ -349,10 +337,6 @@ def promote_piece(piece_id, piece_color):
     pieces_types[piece_id] = choice
     image_path = f"./images/{choice}_png_shadow_512px.png"
     pieces_images[piece_id] = pygame.transform.scale(pygame.image.load(image_path), (square_size, square_size))
-    draw_chessboard()
-    for piece_name, (piece_x, piece_y) in pieces_positions.items():
-        draw_piece(piece_name, piece_x, piece_y)
-    pygame.display.flip()
 
 def handle_drag_and_drop():
     global dragging_piece
