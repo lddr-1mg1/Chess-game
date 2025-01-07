@@ -116,12 +116,10 @@ def big_castle(position_of_the_king):
     if pieces_moves[8] == 1:
         if position_of_the_king == [5, 0]:
             pieces_positions[2] = [4, 0] # change la position de la tour      
-            print(is_cell_occuped(6, 0))
 
     if pieces_moves[24] == 1:
         if position_of_the_king == [5, 7]:
             pieces_positions[18] = [4, 7] # change la position de la tour
-            print(is_cell_occuped(6, 7))
 
         draw_chessboard()
         for piece_name, (piece_x, piece_y) in pieces_positions.items():
@@ -269,29 +267,28 @@ def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
     if "king" not in pieces_types[piece_id]: # Checks if the piece is a king
         return
     
-    if (pieces_moves[8] == 0 and pieces_moves[1] == 0) or (pieces_moves[24] == 0 and pieces_moves[17] == 0):
-        print("Encore la")
-        print(new_piece_x_position - piece_x_position)
-        if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
-            print("tgrgtr")
-            return
-    
-    elif (pieces_moves[8] == 0 and pieces_moves[2] == 0):
-        print(is_cell_occuped(6, 0) is False)
-        if is_cell_occuped(6, 0) is False:
-            print("ICI")
-            if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
+    if not is_king_checked([piece_x_position, piece_y_position], pieces_colors[piece_id]):
+        if (((pieces_moves[8] == 0 and pieces_moves[1] == 0) or (pieces_moves[24] == 0 and pieces_moves[17] == 0)) and new_piece_x_position == 1):
+            if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
                 return
     
-    elif (pieces_moves[24] == 0 and pieces_moves[18] == 0) and is_cell_occuped(6, 7) is False:
-        if is_cell_occuped(6, 7) is False:
-            print("LA")
+        elif ((pieces_moves[8] == 0 and pieces_moves[2] == 0) and new_piece_y_position == 0):
+            if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
+                return
+            if is_cell_occuped(6, 0) and new_piece_x_position == 5:
+                return
+    
+        elif ((pieces_moves[24] == 0 and pieces_moves[18] == 0) and new_piece_y_position == 7):
+            if is_cell_occuped(6, 7) and new_piece_x_position == 5:
+                return
             if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
                 return
     
     # Checks king if movement is for the king.
-    elif not (abs(new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1):
-        return
+    else:
+        
+        if not (abs(new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1):
+            return
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
     little_castle(pieces_positions[dragging_piece])
     big_castle(pieces_positions[dragging_piece])
