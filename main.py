@@ -193,6 +193,7 @@ def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_positio
             (pawn_position[0] + 1, pawn_position[1]),
             (pawn_position[0] - 1, pawn_position[1])
         ]
+        
         for adj_x, adj_y in adjacents_positions:
             for target_id, target_position in pieces_positions.items():
                 if target_position == [adj_x, adj_y] and pieces_types[target_id] in {"Black_pawn", "White_pawn"}: # vérifie que la position et que se soit un pion
