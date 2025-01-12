@@ -21,6 +21,7 @@ current_player = "White"
 running = True
 dragging_piece = None
 positions_already_have = []
+legal_moves = [] # useless
 
 # Sliced pieces informations (types, colors, positions, moves, images)
 pieces_types = {}
@@ -248,6 +249,7 @@ def rook_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
         return
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
+
 def knight_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "knight" not in pieces_types[piece_id]:
         return
@@ -263,38 +265,46 @@ def bishop_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_po
         return
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
+
 def queen_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "queen" not in pieces_types[piece_id]:
         return
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
-# ----------------------- NOT FINISHED -----------------------
+# ----------------------- NOT FINISHED ----------------------- YES Iit's finished !!!!
 def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "king" not in pieces_types[piece_id]: # Checks if the piece is a king
         return
-    
-    illegal_check_cells = [[piece_x_position, piece_y_position], [0, 1], [0, 2], [0, 4], [0, 5], [7, 1], [7, 2], [7, 4], [7, 5]] # Potiential castle move cells
-    # We need to check if the king is checked and if the cells between the king and the rook are not checked
-    for cell in illegal_check_cells:
-        print(cell)
-        if is_cell_checked(cell, "White"):
-            print("Cell est checked")
 
     if not is_cell_checked([piece_x_position, piece_y_position], pieces_colors[piece_id]):
         if (((pieces_moves[8] == 0 and pieces_moves[1] == 0) or (pieces_moves[24] == 0 and pieces_moves[17] == 0)) and new_piece_x_position == 1):
-            if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
-                return
+            print (dragging_piece)
+            if dragging_piece == 8:
+                if [2, 0] in accessible_cells("Black"):
+                    return
+                if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
+                    return
+            
+            elif dragging_piece == 24:
+                if [2, 7] in accessible_cells("White"):
+                    return
+                if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
+                    return
     
         elif ((pieces_moves[8] == 0 and pieces_moves[2] == 0) and new_piece_y_position == 0):
             if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
                 return
             if is_cell_occuped(6, 0) and new_piece_x_position == 5:
                 return
-    
+            if [4, 0] in accessible_cells("Black") or [5, 0] in accessible_cells("Black"):
+                return
+
         elif ((pieces_moves[24] == 0 and pieces_moves[18] == 0) and new_piece_y_position == 7):
             if is_cell_occuped(6, 7) and new_piece_x_position == 5:
                 return
             if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
+                return
+            if [4, 7] in accessible_cells("White") or [5, 7] in accessible_cells("White"):
                 return
     
     # Checks king if movement is for the king.
@@ -388,6 +398,15 @@ def promote_piece(piece_id, piece_color):
     image_path = f"./images/{choice}_png_shadow_512px.png" # Change the piece image
     pieces_images[piece_id] = pygame.transform.scale(pygame.image.load(image_path), (square_size, square_size)) # Set the correct piece image
 
+def can_someone_move(color):
+    for piece_id, piece_color in pieces_colors:
+        if pieces_colors[piece_id] == color:
+            legal_moves = piece.get_legal_moves()
+            if legal_moves:
+               return True
+    print("non")
+    return False
+
 def is_king_in_check(color):
     for piece_id, piece_position in pieces_positions.items():
         if pieces_colors[piece_id] == color and "king" in pieces_types[piece_id]:
@@ -476,6 +495,7 @@ def handle_drag_and_drop():
             bishop_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             queen_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             king_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
+            can_someone_move(pieces_colors[dragging_piece])
 
             white_king_position = pieces_positions[8]
             black_king_position = pieces_positions[24]
