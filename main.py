@@ -202,8 +202,9 @@ def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_positio
                 if target_position == [adjacent_x, adjacent_y] and pieces_types[target_id] in {"Black_pawn", "White_pawn"}:
                     # If the target color is different from the pawn color and the target has never moved (so possibly moved 2 squares)
                     if pieces_colors[target_id] != pawn_color and pieces_moves[target_id] == 1:
-                        del pieces_positions[target_id] # Delete the target piece
-                        return True
+                        if new_piece_x_position == target_position[0]:
+                            del pieces_positions[target_id] # Delete the target piece
+                            return True
     return False
 
 def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
@@ -398,15 +399,6 @@ def promote_piece(piece_id, piece_color):
     image_path = f"./images/{choice}_png_shadow_512px.png" # Change the piece image
     pieces_images[piece_id] = pygame.transform.scale(pygame.image.load(image_path), (square_size, square_size)) # Set the correct piece image
 
-def can_someone_move(color):
-    for piece_id, piece_color in pieces_colors:
-        if pieces_colors[piece_id] == color:
-            legal_moves = piece.get_legal_moves()
-            if legal_moves:
-               return True
-    print("non")
-    return False
-
 def is_king_in_check(color):
     for piece_id, piece_position in pieces_positions.items():
         if pieces_colors[piece_id] == color and "king" in pieces_types[piece_id]:
@@ -495,7 +487,6 @@ def handle_drag_and_drop():
             bishop_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             queen_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             king_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
-            can_someone_move(pieces_colors[dragging_piece])
 
             white_king_position = pieces_positions[8]
             black_king_position = pieces_positions[24]
