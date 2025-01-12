@@ -3,31 +3,33 @@ import pygame
 from collections import Counter
 
 with open("pieces.json") as f:
-    pieces = json.load(f) # Import all pieces settings
+    pieces = json.load(f)  # Import every pieces settings
 
-# Initialise pygame
+# Initialize pygame
 pygame.init()
 
-# Display settings
-screen_width = 1000 
-square_size = screen_width // 8 
+# Screen settings
+screen_width = 1000
+square_size = screen_width // 8
 light_square_color = "#d5c9bb"
 dark_square_color = "#b2a696"
 screen = pygame.display.set_mode((screen_width, screen_width))
+blured_background = pygame.transform.scale(pygame.image.load("./images/blured_background.jpg"), (screen_width, screen_width))
 
 # Game settings
 current_player = "White"
 running = True
 dragging_piece = None
+positions_already_have = []
 
-# Pieces settings dictionaries
+# Sliced pieces informations (types, colors, positions, moves, images)
 pieces_types = {}
 pieces_colors = {}
 pieces_positions = {}
 pieces_moves = {}
 pieces_images = {}
 
-# Separates the various parameters of the pieces, and add them to the corresponding dictionaries
+# Slicing pieces informations and put into dictionaries
 for piece in pieces["pieces"]:
     piece_id = piece["id"]
     pieces_types[piece_id] = piece["type"]
@@ -35,102 +37,96 @@ for piece in pieces["pieces"]:
     pieces_positions[piece_id] = piece["position"]
     pieces_moves[piece_id] = piece["moves"]
     img = pygame.image.load(piece["image"])
-    pieces_images[piece_id] = pygame.transform.scale(img, (square_size, square_size)) # Scales the image to fit into a cell.
+    pieces_images[piece_id] = pygame.transform.scale(img, (square_size, square_size))
 
-positions_already_have = [] # I dont know what this is for
-
-# Draw the chess boeard
+# Draw the chessboard
 def draw_chessboard():
     for row in range(8):
         for col in range(8):
-            color = pygame.Color(light_square_color) if (row + col) % 2 == 0 else pygame.Color(dark_square_color) # Colors the square, every other time black, then white
-            pygame.draw.rect(screen, color, (col * square_size, row * square_size, square_size, square_size)) # Shows the square
+            color = pygame.Color(light_square_color) if (row + col) % 2 == 0 else pygame.Color(dark_square_color) # Alternating colors
+            pygame.draw.rect(screen, color, (col * square_size, row * square_size, square_size, square_size)) # Draw the square
 
-# Draw the piece
+# Draw the pieces
 def draw_piece(piece_id, piece_x_position, piece_y_position):
-    piece_image = pieces_images[piece_id] # Get piece image
-    grid_x_position = (piece_x_position * square_size) + (square_size - piece_image.get_width()) // 2 # Calculates the correct x-axis position
-    grid_y_position = (piece_y_position * square_size) + (square_size - piece_image.get_height()) // 2 # Calculates the correct y-axis position
-    screen.blit(piece_image, (grid_x_position, grid_y_position)) # Shows the piece
+    piece_image = pieces_images[piece_id]
+    grid_x_position = (piece_x_position * square_size) + (square_size - piece_image.get_width()) // 2 # x center the piece on the square
+    grid_y_position = (piece_y_position * square_size) + (square_size - piece_image.get_height()) // 2 # y center the piece on the square
+    screen.blit(piece_image, (grid_x_position, grid_y_position)) # Draw the piece on the screen
 
 def draw_by_repitition():
-    immutable_positions = tuple(sorted((pid, tuple(pos)) for pid, pos in pieces_positions.items()))
-    positions_already_have.append(immutable_positions)
-    counter = Counter(positions_already_have)
-    if any(count == 3 for count in counter.values()):
-        screen.fill("#000000")
-        font = pygame.font.Font(None, 66)
-        message = font.render("partie nulle par répétition", True, pygame.Color("#FFFFFF"))
-        screen.blit(message, (70, 200))
-        pygame.display.flip()
-        pygame.time.wait(10000)
-        pygame.quit()
+    immutable_positions = tuple(sorted((piece_id, tuple(piece_position)) for piece_id, piece_position in pieces_positions.items())) # Convert the dict to a tuple of tuples wich can be hashed (By cha)
+    positions_already_have.append(immutable_positions) #Add the current position to the list of positions already have
+    counter = Counter(positions_already_have) # Count the number of times each position appears
+    if any(count == 3 for count in counter.values()): # If a position appears 3 times 
+        draw_text("DRAW BY REPETITION") # Draw the text "Draw by repitition"
+
+def draw_text(text):
+    screen.blit(blured_background, (0, 0))  # Display the background
+    font = pygame.font.SysFont("Segoe_ui", 66, bold=True)  # Create a font 
+    message = font.render(text, True, pygame.Color("#FFFFFF")) # Create text
+    text_rect = message.get_rect(center=(screen_width // 2, screen_width // 2)) # Center the text
+    screen.blit(message, text_rect.topleft)  # Display the text
+    pygame.display.flip()  # Update screen
+    pygame.time.wait(5000)  # Wait 10 seconds
+    pygame.quit()  # Quit pygame
 
 def is_within_board(x, y):
-    return 0 <= x < 8 and 0 <= y < 8 # Checks if the cordonates are out of the board
+    return 0 <= x < 8 and 0 <= y < 8  # Check if the position is within the board
 
 def is_cell_occuped(x, y):
-    for position in pieces_positions.values():
-       if position == [x, y]:
-           return True
+    for position in pieces_positions.values(): # For each position in the pieces positions
+        if position == [x, y]: # Check if the position is occupied
+            return True
     return False
- 
-def can_move(piece_id):
-    return pieces_colors[piece_id] == current_player # Checks if the right player is playing 
 
-# Checks whether the piece encloses a path obstructed by another piece.
+def can_move(piece_id):
+    return pieces_colors[piece_id] == current_player # Check if its the current player turn
+
 def is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-    # Calculates the differcence between the current and new position
-    difference_x = new_piece_x_position - piece_x_position 
+    # Calculate the difference between the new position and the current position
+    difference_x = new_piece_x_position - piece_x_position
     difference_y = new_piece_y_position - piece_y_position
-     # Calculates the movement direction on the x and y axis (-1, 0, or 1)
-    distance_x = difference_x // abs(difference_x) if difference_x != 0 else 0 
-    distance_y = difference_y // abs(difference_y) if difference_y != 0 else 0
-    # Calculates how far the piece advances on the x and y axes
-    movement_x,  movement_y = piece_x_position + distance_x, piece_y_position + distance_y 
-    # For each cell advancement, it checks whether there is a piece on it.
+
+    # Calculate the direction of the movement (1 or -1)
+    direction_x = difference_x // abs(difference_x) if difference_x != 0 else 0
+    direction_y = difference_y // abs(difference_y) if difference_y != 0 else 0
+    
+    # Move one time in the direction of the movement
+    movement_x = piece_x_position + direction_x
+    movement_y = piece_y_position + direction_y
+    
     while (movement_x, movement_y) != (new_piece_x_position, new_piece_y_position):
-        if [movement_x, movement_y] in pieces_positions.values():
+        if [movement_x, movement_y] in pieces_positions.values(): # If the cell is occupied return false
             return False
-        movement_x += distance_x
-        movement_y += distance_y
-    return True
+        # Increases the movement by the direction
+        movement_x += direction_x 
+        movement_y += direction_y
+    return True # If no piece is on the path return True
 
 def catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
-    # Assembles the new positions variables in an array
-    new_piece_position = [new_piece_x_position, new_piece_y_position] 
-    # Gets the piece color
+    # Slice the new position to get x and y
+    new_piece_position = [new_piece_x_position, new_piece_y_position]
+    # Get piece color
     piece_color = pieces_colors[piece_id]
-    # Checks if the playing piece goes on a cell already occupied by another piece
+    
     for target_id, target_position in list(pieces_positions.items()): 
-        if target_position == new_piece_position and target_id != piece_id: # Checks that the  piece does not eat itself
-            if piece_color != pieces_colors[target_id]: # Checks that the  piece does not eat its own color
-                del pieces_positions[target_id] # Deletes the piece
+        # If the target position is the new position and the target is not the piece
+        if target_position == new_piece_position and target_id != piece_id:
+            # If the target color is different from the piece color
+            if piece_color != pieces_colors[target_id]: 
+                del pieces_positions[target_id] # Delete the target piece
             else:
                 return False
     return True
 
-def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-    if can_move(piece_id) and catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
-        if "knight" not in pieces_types[piece_id]: # The knight can jump over the other pieces
-            if not is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-                return
-        if is_within_board(new_piece_x_position, new_piece_y_position):
-            pieces_positions[piece_id] = [new_piece_x_position, new_piece_y_position]
-            global current_player
-            if (new_piece_x_position, new_piece_y_position) != (piece_x_position, piece_y_position):
-                check_promotion(piece_id, new_piece_y_position) # Check if the piece can be promoted
-                current_player = "Black" if current_player == "White" else "White" # Changes player turn
-                pieces_moves[piece_id] += 1 # Add one move to the piece
-                draw_by_repitition()
-
+# Return the accessible cells of all pieces for a color
 def accessible_cells(color):
-    accessibles_cells = []
-    for piece_id in pieces_positions:
-        if pieces_colors[piece_id] == color:
-            piece_x_position, piece_y_position = pieces_positions[piece_id]
-            piece_type = pieces_types[piece_id]
-            # Basicaly the same code as the differents pieces movement functions. Could be optimized.
+    accessibles_cells = [] # Contains all the accessible cells
+    for piece_id in pieces_positions: # For each piece
+        if pieces_colors[piece_id] == color: # If the piece color is the same as the color
+            piece_x_position, piece_y_position = pieces_positions[piece_id] # Slice the piece position
+            piece_type = pieces_types[piece_id] # Get the piece type
+            # Basically the as the different pieces movements but instead of moving the piece we append the accessible cells
             if "rook" in piece_type:
                 for x_cell in range(8):
                     for y_cell in range(8):
@@ -140,8 +136,8 @@ def accessible_cells(color):
             elif "knight" in piece_type:
                 for x_cell in range(8):
                     for y_cell in range(8):
-                        if ((abs(x_cell - piece_x_position) == 2 and abs(y_cell - piece_y_position) == 1)
-                            or (abs(x_cell - piece_x_position) == 1 and abs(y_cell - piece_y_position) == 2)):
+                        if ((abs(x_cell - piece_x_position) == 2 and abs(y_cell - piece_y_position) == 1) or
+                            (abs(x_cell - piece_x_position) == 1 and abs(y_cell - piece_y_position) == 2)):
                             accessibles_cells.append([x_cell, y_cell])
 
             elif "bishop" in piece_type:
@@ -153,94 +149,107 @@ def accessible_cells(color):
             elif "queen" in piece_type:
                 for x_cell in range(8):
                     for y_cell in range(8):
-                        if (abs(x_cell - piece_x_position) == abs(y_cell - piece_y_position) or x_cell == piece_x_position or y_cell == piece_y_position):
+                        if (abs(x_cell - piece_x_position) == abs(y_cell - piece_y_position)
+                                or x_cell == piece_x_position
+                                or y_cell == piece_y_position):
                             if is_path_clear(piece_x_position, piece_y_position, x_cell, y_cell):
                                 accessibles_cells.append([x_cell, y_cell])
             
+            # We only calculate the catching movements for the pawns because this function is only used for the check
             elif "pawn" in piece_type:
                 direction = -1 if "Black_pawn" in piece_type else 1
-                for x_cell in range(8):
-                    for y_cell in range(8):
-                        if abs(x_cell - piece_x_position) == 1 and (y_cell - piece_y_position) == direction:
-                            if [x_cell, y_cell] in pieces_positions.values():
-                                for target_id, pos in pieces_positions.items():
-                                    if pos == [x_cell, y_cell] and pieces_colors[target_id] != color:
-                                        accessibles_cells.append([x_cell, y_cell])
+                left_diag = [piece_x_position - 1, piece_y_position + direction]
+                right_diag = [piece_x_position + 1, piece_y_position + direction]
+                if is_within_board(left_diag[0], left_diag[1]):
+                    accessibles_cells.append(left_diag)
+                if is_within_board(right_diag[0], right_diag[1]):
+                    accessibles_cells.append(right_diag)
 
             elif "king" in piece_type:
                 for x_cell in range(8):
                     for y_cell in range(8):
                         if abs(x_cell - piece_x_position) <= 1 and abs(y_cell - piece_y_position) <= 1:
                             accessibles_cells.append([x_cell, y_cell])
-
-    return accessibles_cells
+    
+    return accessibles_cells # Return every pieces accessible cells
 
 def is_cell_checked(cell_position, target_color):
-    opponent_color = "White" if target_color == "Black" else "Black"
-    return cell_position in accessible_cells(opponent_color) 
+    opponent_color = "White" if target_color == "Black" else "Black" # Get the opponent color
+    return cell_position in accessible_cells(opponent_color) # Check if the cell is in the opponent accessible cells if it is the cell is checked
 
 def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_position):
-    pawn_position = pieces_positions[pawn_id]
-    pawn_color = pieces_colors[pawn_id]
-    direction = 1 if pawn_color == "White" else -1
-    
+    piece_x_position, piece_y_position = pieces_positions[pawn_id] # Get the pawn position
+    pawn_color = pieces_colors[pawn_id] # Get the pawn color
+    direction = 1 if pawn_color == "White" else -1 # Get the direction of the pawn
+
+    # If the pawn moves diagonally
     if (new_piece_x_position, new_piece_y_position) in [
-        (pawn_position[0] + 1, pawn_position[1] + direction),
-        (pawn_position[0] - 1, pawn_position[1] + direction)
-    ]: # Vérifie si la case ciblée est une case de prise en passant
-    
+        (piece_x_position + 1, piece_y_position + direction),
+        (piece_x_position - 1, piece_y_position + direction)
+    ]:
+        # Get the adjacent cells
         adjacents_positions = [
-            (pawn_position[0] + 1, pawn_position[1]),
-            (pawn_position[0] - 1, pawn_position[1])
+            (piece_x_position + 1, piece_y_position),
+            (piece_x_position - 1,piece_y_position)
         ]
-        
-        for adj_x, adj_y in adjacents_positions:
+
+        # For each adjacent cell
+        for adjacent_x, adjacent_y in adjacents_positions:
+            # For each piece on the board
             for target_id, target_position in pieces_positions.items():
-                if target_position == [adj_x, adj_y] and pieces_types[target_id] in {"Black_pawn", "White_pawn"}: # vérifie que la position et que se soit un pion
-                    if pieces_colors[target_id] != pawn_color and pieces_moves[target_id] == 1: # verifie la couleur et que le pion n'a bougé qu'une seul fois
-                        del pieces_positions[target_id] # supprime le pion
+                # If the target position is the adjacent cell and the target is a pawn
+                if target_position == [adjacent_x, adjacent_y] and pieces_types[target_id] in {"Black_pawn", "White_pawn"}:
+                    # If the target color is different from the pawn color and the target has never moved (so possibly moved 2 squares)
+                    if pieces_colors[target_id] != pawn_color and pieces_moves[target_id] == 1:
+                        del pieces_positions[target_id] # Delete the target piece
                         return True
-    return False          
+    return False
 
 def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-    if "pawn" not in pieces_types[piece_id]: # Checks if the piece is a pawn
+    if "pawn" not in pieces_types[piece_id]:
         return
     
-    direction = -1 if "Black_pawn" in pieces_types[piece_id] else 1 # Checks the color of the pawn and set the direction (-1, 1)
-    steps = [1, 2] if pieces_moves[piece_id] == 0 else [1] # If the pawn has not moved it can advance by two cells 
-    allowed_moves = [(piece_x_position, piece_y_position + direction * step) for step in steps] # Sets the allowed moves
-    diagonal_captures = [(piece_x_position - 1, piece_y_position + direction), (piece_x_position + 1, piece_y_position + direction)] # Set the allowed diagnoal moves for capturing
+    direction = -1 if "Black_pawn" in pieces_types[piece_id] else 1 # Get the direction of the pawn (1 or -1)
+    steps = [1, 2] if pieces_moves[piece_id] == 0 else [1] # If the pawn has never moved it can move 2 squares else 1 square
+    allowed_moves = [(piece_x_position, piece_y_position + direction * step) for step in steps] # Calculate the allowed moves
     
-    # Checks king if movement is for the pawn.
-    if (new_piece_x_position, new_piece_y_position) in allowed_moves: 
-        if [new_piece_x_position, new_piece_y_position] not in pieces_positions.values(): # This verification is nessesary.
+    # Get diagonal moves for captguring
+    diagonal_captures = [
+        (piece_x_position - 1, piece_y_position + direction),
+        (piece_x_position + 1, piece_y_position + direction)
+    ]
+
+    # Strait movement, if the new position is allowed 
+    if (new_piece_x_position, new_piece_y_position) in allowed_moves:
+        # If the new position is not occupied
+        if [new_piece_x_position, new_piece_y_position] not in pieces_positions.values():
             move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             return
-    
-    # Checks if the pawn can catch another piece.
+
+    # Diagonal capture, if the new position is a diagonal
     if (new_piece_x_position, new_piece_y_position) in diagonal_captures:
+        # Sclice the new position
         new_piece_position = [new_piece_x_position, new_piece_y_position]
+        # For each piece on the board
         for target_id, position in pieces_positions.items():
+            # If the target position is the new position and the target is not the piece
             if position == new_piece_position and pieces_colors[target_id] != pieces_colors[piece_id]:
                 move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
                 return
 
-    # cheks if the pawn can take " en passant"
+    # Prise en passant
     if is_prise_en_passant_legit(piece_id, new_piece_x_position, new_piece_y_position):
         move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
-
-
 def rook_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-    if "rook" not in pieces_types[piece_id]: # Checks if the piece is a rook
+    if "rook" not in pieces_types[piece_id]:
         return
-    # Checks king if movement is for the rook.
     if not (new_piece_x_position == piece_x_position or new_piece_y_position == piece_y_position):
         return
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
 def knight_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-    if "knight" not in pieces_types[piece_id]: # Checks if the piece is a knight
+    if "knight" not in pieces_types[piece_id]:
         return
     if not ((abs(new_piece_x_position - piece_x_position) == 2 and abs(new_piece_y_position - piece_y_position) == 1) or
             (abs(new_piece_x_position - piece_x_position) == 1 and abs(new_piece_y_position - piece_y_position) == 2)):
@@ -248,25 +257,24 @@ def knight_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_po
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
 def bishop_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-    if "bishop" not in pieces_types[piece_id]: # Checks if the piece is a bishop
+    if "bishop" not in pieces_types[piece_id]:
         return
-    # Checks king if movement is for the bishop.
     if not abs(piece_x_position - new_piece_x_position) == abs(piece_y_position - new_piece_y_position):
         return
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
 def queen_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-    if "queen" not in pieces_types[piece_id]: # Checks if the piece is a queen
+    if "queen" not in pieces_types[piece_id]:
         return
-    # We don't need any verification because the queen can do every allowed moves.
-    move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position) 
+    move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
+# ----------------------- NOT FINISHED -----------------------
 def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "king" not in pieces_types[piece_id]: # Checks if the piece is a king
         return
     
     illegal_check_cells = [[piece_x_position, piece_y_position], [0, 1], [0, 2], [0, 4], [0, 5], [7, 1], [7, 2], [7, 4], [7, 5]] # Potiential castle move cells
-
+    # We need to check if the king is checked and if the cells between the king and the rook are not checked
     for cell in illegal_check_cells:
         print(cell)
         if is_cell_checked(cell, "White"):
@@ -299,76 +307,143 @@ def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
     big_castle(pieces_positions[dragging_piece])
 
 def little_castle(position_of_the_king):
-    if pieces_moves[8] == 1:
+    if pieces_moves[8] == 1: # If the white king has not moved
         if position_of_the_king == [1, 0]:
-            pieces_positions[1] = [2, 0] # change la position de la tour      
-    elif pieces_moves[24] == 1:
+            pieces_positions[1] = [2, 0]  # Tour blanche
+    elif pieces_moves[24] == 1: # If the black king has not moved
         if position_of_the_king == [1, 7]:
-            pieces_positions[17] = [2, 7] # change la position de la tour
+            pieces_positions[17] = [2, 7]  # Tour noire
 
 def big_castle(position_of_the_king):
-    if pieces_moves[8] == 1:
+    if pieces_moves[8] == 1: # If the white king has not moved
         if position_of_the_king == [5, 0]:
-            pieces_positions[2] = [4, 0] # change la position de la tour      
-            print(is_cell_occuped(6, 0))
-
-    if pieces_moves[24] == 1:
+            pieces_positions[2] = [4, 0]
+    if pieces_moves[24] == 1: # If the black king has not moved
         if position_of_the_king == [5, 7]:
-            pieces_positions[18] = [4, 7] # change la position de la tour
+            pieces_positions[18] = [4, 7]
 
-# Checks if the piece arrives all on the last line (for its color) of the chess board
 def check_promotion(piece_id, piece_y_position):
-    piece_type = pieces_types[piece_id]
-    if piece_type == "White_pawn" and piece_y_position == 7:
+    piece_type = pieces_types[piece_id] # Get the piece type
+    if piece_type == "White_pawn" and piece_y_position == 7: # If the piece is a white pawn and is at the end of the board
         promote_piece(piece_id, "White")
-    elif piece_type == "Black_pawn" and piece_y_position == 0:
+    elif piece_type == "Black_pawn" and piece_y_position == 0: # If the piece is a black pawn and is at the end of the board
         promote_piece(piece_id, "Black")
 
 def promote_piece(piece_id, piece_color):
+    # Get potential pieces to promote to
     options = ["queen", "bishop", "rook", "knight"]
+    # Remove prefix
     prefix = "w" if piece_color == "White" else "b"
     options = [f"{prefix}_{option}" for option in options]
-    font = pygame.font.Font(None, screen_width // 12)
+    # Import font
+    font = pygame.font.SysFont("Segoe_ui", screen_width // 18, bold=True)
     
     def draw_promotion_screen():
-        bg = pygame.image.load("./images/blured_background.jpg")
-        bg = pygame.transform.scale(bg, (screen_width, screen_width))
-        screen.blit(bg, (0, 0))
-        message = font.render("Promote your piece!", True, pygame.Color("#FFFFFF"))
-        message_rect = message.get_rect(center=(screen_width // 2, screen_width // 3))
-        screen.blit(message, message_rect)
-        button_width, button_height = screen_width // 5, screen_width // 9
-        total_buttons_width = len(options) * button_width + (len(options) - 1) * 20
-        start_x = (screen_width - total_buttons_width) // 2
-        button_y = screen_width // 2
-        button_rects = []
-        for i, option in enumerate(options):
-            button_x = start_x + i * (button_width + 20)
-            button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
-            button_rects.append(button_rect)
-            pygame.draw.rect(screen, pygame.Color("#FFFFFF"), button_rect, border_radius=15)
-            option_text = font.render(option.split('_')[1], True, pygame.Color("#000000"))
-            text_rect = option_text.get_rect(center=button_rect.center)
-            screen.blit(option_text, text_rect)
+        screen.blit(blured_background, (0, 0))  # Display the blurred background on the screen.
+        message = font.render("Promote your piece!", True, pygame.Color("#FFFFFF"))  # Create the promotion message text.
+        message_rect = message.get_rect(center=(screen_width // 2, screen_width // 3))  # Define a centered rectangle to position the text.
+        screen.blit(message, message_rect)  # Display the text on the screen, centered using `message_rect`.
+        
+        button_width, button_height = screen_width // 5, screen_width // 9  # Set the dimensions of the buttons.
+        total_buttons_width = len(options) * button_width + (len(options) - 1) * 20  # Calculate the total width of all buttons, including spaces between them.
+        start_x = (screen_width - total_buttons_width) // 2  # Calculate the starting x position to center the buttons.
+        button_y = screen_width // 2  # Set the y position of the buttons.
+        
+        button_rects = []  # Initialize an empty list to store the button rectangles.
+        for i, option in enumerate(options):  # Iterate over each promotion option.
+            # Draw the button
+            button_x = start_x + i * (button_width + 20)  # Calculate the x position of the current button.
+            button_rect = pygame.Rect(button_x, button_y, button_width, button_height)  # Create the rectangle for the button.
+            button_rects.append(button_rect)  # Add the rectangle to the list of button rectangles.
+            pygame.draw.rect(screen, pygame.Color("#FFFFFF"), button_rect, border_radius=15)  # Draw the button with rounded corners.
+            
+            # Draw the text on the button.
+            option_text = font.render(option.split('_')[1], True, pygame.Color("#000000"))  # Create the text for the button using the option name.
+            text_rect = option_text.get_rect(center=button_rect.center)  # Center the text within the button rectangle.
+            screen.blit(option_text, text_rect)  # Display the text on the button.
+        
+        # Update the screen to display all elements.
         pygame.display.flip()
+        
+        # Return the list of button rectangles for future interaction.
         return button_rects
-    button_rects = draw_promotion_screen()
-    running = True
+
+    button_rects = draw_promotion_screen() # Get the butttons rectangles
+    running_promotion = True
     choice = None
-    while running:
+    while running_promotion:
+        # Prevents from crashing
         for event_p in pygame.event.get():
             if event_p.type == pygame.QUIT:
                 pygame.quit()
-                exit()
+            # If a mouse click is detected     
             if event_p.type == pygame.MOUSEBUTTONDOWN and event_p.button == 1:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                for i, button_rect in enumerate(button_rects):
-                    if button_rect.collidepoint(mouse_x, mouse_y):
-                        choice = options[i]
-                        running = False
-    pieces_types[piece_id] = choice
-    image_path = f"./images/{choice}_png_shadow_512px.png"
-    pieces_images[piece_id] = pygame.transform.scale(pygame.image.load(image_path), (square_size, square_size))
+                mouse_x, mouse_y = pygame.mouse.get_pos() # Get the mouse position
+                for i, button_rect in enumerate(button_rects): # For each button rectangle
+                    if button_rect.collidepoint(mouse_x, mouse_y): # If the mouse is on the button
+                        choice = options[i] # Set the choice to the button option
+                        running_promotion = False # Stop the promotion screen
+    
+    pieces_types[piece_id] = choice # Set the piece type to the choice
+    image_path = f"./images/{choice}_png_shadow_512px.png" # Change the piece image
+    pieces_images[piece_id] = pygame.transform.scale(pygame.image.load(image_path), (square_size, square_size)) # Set the correct piece image
+
+def is_king_in_check(color):
+    for piece_id, piece_position in pieces_positions.items():
+        if pieces_colors[piece_id] == color and "king" in pieces_types[piece_id]:
+            return is_cell_checked(piece_position, color)
+    return False
+
+def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
+    if not can_move(piece_id): 
+        return 
+
+    # Save current piece position
+    old_piece_x_position, old_piece_y_position = piece_x_position, piece_y_position
+
+    # Looking for a piece to capture
+    piece_capturee_id = None
+    for target_id, target_position in pieces_positions.items():
+        if target_position == [new_piece_x_position, new_piece_y_position] and target_id != piece_id:
+            piece_capturee_id = target_id
+            break
+
+    if not catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
+        return
+
+    # Verify if the path is clear
+    if "knight" not in pieces_types[piece_id]:
+        if not is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
+            return
+
+    # Verify if the new position is within the board
+    if not is_within_board(new_piece_x_position, new_piece_y_position):
+        return
+
+    # Move the piece
+    pieces_positions[piece_id] = [new_piece_x_position, new_piece_y_position]
+
+    # Verify if the king is in check
+    color = pieces_colors[piece_id]
+    if is_king_in_check(color):
+        # Cancel the move
+        pieces_positions[piece_id] = [old_piece_x_position, old_piece_y_position]
+        # Cancel the capture if needed
+        if piece_capturee_id is not None:
+            pieces_positions[piece_capturee_id] = [new_piece_x_position, new_piece_y_position]
+        return
+
+    global current_player
+    # If the piece has correctly moved
+    if (new_piece_x_position, new_piece_y_position) != (old_piece_x_position, old_piece_y_position):
+        # Check promotion
+        check_promotion(piece_id, new_piece_y_position)
+        # Change the current player
+        current_player = "Black" if current_player == "White" else "White"
+        # Increment the number of moves for the piece
+        pieces_moves[piece_id] += 1
+        # Check draw
+        draw_by_repitition()
 
 def handle_drag_and_drop():
     global dragging_piece

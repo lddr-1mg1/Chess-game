@@ -1,3 +1,0 @@
-- Add commentaries to promote piece.
-- Fix draw by repetition
-- Prise en passant
