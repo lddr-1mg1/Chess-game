@@ -130,12 +130,12 @@ def can_someone_move(color):
     for cell in accessible_cells(color):
         if not is_cell_checked(cell, color):
             legal_moves.append(cell)
-    print(legal_moves)
+    # print(legal_moves)
     if legal_moves == 0:
-        print("False")
+        # print("False")
         return False
     else:
-        print("true")
+        # print("true")
         return True
 # Return the accessible cells of all pieces for a color
 def accessible_cells(color):
@@ -289,27 +289,23 @@ def queen_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_pos
         return
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
-# ----------------------- NOT FINISHED ----------------------- YES Iit's finished !!!!
 def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "king" not in pieces_types[piece_id]: # Checks if the piece is a king
         return
         
     if(pieces_moves[8] == 0 and pieces_moves[1] == 0 and dragging_piece == 8) and new_piece_x_position == 1 and not is_king_in_check("White"):
-        print("le")
         if [2, 0] in accessible_cells("Black"):
             return
         if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
             return
             
     elif(pieces_moves[24] == 0 and pieces_moves[17] == 0 and dragging_piece == 24) and new_piece_x_position == 1 and not is_king_in_check("Black"):
-        print("la")
         if [2, 7] in accessible_cells("White"):
             return
         if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
             return
     
     elif ((pieces_moves[8] == 0 and pieces_moves[2] == 0) and new_piece_y_position == 0) and not is_king_in_check("White"):
-        print("da")
         if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
             return
         if is_cell_occuped(6, 0) and new_piece_x_position == 5:
@@ -318,7 +314,6 @@ def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
             return
 
     elif ((pieces_moves[24] == 0 and pieces_moves[18] == 0) and new_piece_y_position == 7) and not is_king_in_check("Black"):
-        print("kjgn")
         if is_cell_occuped(6, 7) and new_piece_x_position == 5:
             return
         if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
@@ -328,11 +323,9 @@ def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
     
     # Checks king if movement is for the king.
     else:
-        print("de")
         if not (abs(new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1):
             return
     
-    print("ICI")
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
     little_castle(pieces_positions[dragging_piece])
     big_castle(pieces_positions[dragging_piece])
@@ -425,31 +418,135 @@ def is_king_in_check(color):
             return is_cell_checked(piece_position, color)
     return False
 
+
+def get_piece_id_on_cell(x, y):
+    """Retourne l'ID de la pièce qui se trouve sur la case (x, y) 
+    ou None si la case est vide."""
+    for p_id, pos in pieces_positions.items():
+        if pos == [x, y]:
+            return p_id
+    return None
+
+def legal_moves():
+    moves = {}
+    for piece_id, position in pieces_positions.items():
+        if pieces_colors[piece_id] != current_player:
+            continue
+        piece_type = pieces_types[piece_id]
+        x, y = position
+        color = pieces_colors[piece_id]
+        candidate_cells = []
+        if "rook" in piece_type:
+            for nx in range(8):
+                for ny in range(8):
+                    if nx == x or ny == y:
+                        candidate_cells.append([nx, ny])
+        elif "knight" in piece_type:
+            for nx in range(8):
+                for ny in range(8):
+                    if (abs(nx - x) == 2 and abs(ny - y) == 1) or (abs(nx - x) == 1 and abs(ny - y) == 2):
+                        candidate_cells.append([nx, ny])
+        elif "bishop" in piece_type:
+            for nx in range(8):
+                for ny in range(8):
+                    if abs(nx - x) == abs(ny - y):
+                        candidate_cells.append([nx, ny])
+        elif "queen" in piece_type:
+            for nx in range(8):
+                for ny in range(8):
+                    if abs(nx - x) == abs(ny - y) or nx == x or ny == y:
+                        candidate_cells.append([nx, ny])
+        elif "pawn" in piece_type:
+            direction = 1 if color == "White" else -1
+            steps = [1, 2] if pieces_moves[piece_id] == 0 else [1]
+            
+            # Avance tout droit
+            for step in steps:
+                nyc = y + (direction * step)
+                if not is_within_board(x, nyc):
+                    break
+                if is_cell_occuped(x, nyc):
+                    # Le pion est bloqué, il ne peut pas avancer plus loin
+                    break
+                candidate_cells.append([x, nyc])
+            
+            # Tentatives de prise en diagonale : seulement si la case est occupée par un adversaire
+            # (ou gérée en passant par votre logique de "prise en passant")
+            for dx in [-1, 1]:
+                nx = x + dx
+                ny = y + direction
+                if is_within_board(nx, ny):
+                    occupant_id = get_piece_id_on_cell(nx, ny)
+                    # On vérifie s'il y a une pièce ennemie présente,
+                    # ou si vous implémentez la prise en passant, vous l'ajoutez ici
+                    if occupant_id is not None and pieces_colors[occupant_id] != color:
+                        candidate_cells.append([nx, ny])
+
+        elif "king" in piece_type:
+            for nx in range(x - 1, x + 2):
+                for ny in range(y - 1, y + 2):
+                    candidate_cells.append([nx, ny])
+        valid_moves = []
+        for nx, ny in candidate_cells:
+            if not is_within_board(nx, ny):
+                continue
+            ally_on_cell = False
+            enemy_on_cell_id = None
+            for t_id, t_pos in pieces_positions.items():
+                if t_pos == [nx, ny]:
+                    if pieces_colors[t_id] == color:
+                        ally_on_cell = True
+                    else:
+                        enemy_on_cell_id = t_id
+                    break
+            if ally_on_cell:
+                continue
+            if "knight" not in piece_type:
+                if not is_path_clear(x, y, nx, ny):
+                    continue
+            old_pos = pieces_positions[piece_id][:]
+            captured_piece_id = None
+            old_captured_pos = None
+            if enemy_on_cell_id is not None:
+                captured_piece_id = enemy_on_cell_id
+                old_captured_pos = pieces_positions[captured_piece_id][:]
+                del pieces_positions[captured_piece_id]
+            pieces_positions[piece_id] = [nx, ny]
+            if not is_king_in_check(color):
+                valid_moves.append([nx, ny])
+            pieces_positions[piece_id] = old_pos
+            if captured_piece_id is not None:
+                pieces_positions[captured_piece_id] = old_captured_pos
+        moves[piece_id] = valid_moves
+    return moves
+
+
+
 def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if not turn(piece_id): 
-        return 
-
-    # Save current piece position
+        return False
+ 
+   # Save current piece position
     old_piece_x_position, old_piece_y_position = piece_x_position, piece_y_position
 
     # Looking for a piece to capture
     piece_capturee_id = None
     for target_id, target_position in pieces_positions.items():
-        if target_position == [new_piece_x_position, new_piece_y_position] and target_id != piece_id:
+        if target_position == [new_piece_x_position, new_piece_y_position] and target_id != piece_id: 
             piece_capturee_id = target_id
             break
 
     if not catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
-        return
-
+        return False
+ 
     # Verify if the path is clear
     if "knight" not in pieces_types[piece_id]:
         if not is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-            return
+            return False
 
     # Verify if the new position is within the board
     if not is_within_board(new_piece_x_position, new_piece_y_position):
-        return
+        return False
 
     # Move the piece
     pieces_positions[piece_id] = [new_piece_x_position, new_piece_y_position]
@@ -462,7 +559,7 @@ def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_positio
         # Cancel the capture if needed
         if piece_capturee_id is not None:
             pieces_positions[piece_capturee_id] = [new_piece_x_position, new_piece_y_position]
-        return
+        return False
 
     global current_player
     # If the piece has correctly moved
@@ -477,6 +574,9 @@ def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_positio
         draw_by_repitition()
         draw_by_lack_of_pieces()
         can_someone_move(current_player)
+        print(legal_moves())
+
+    return True
 
 def handle_drag_and_drop():
     global dragging_piece
@@ -510,13 +610,7 @@ def handle_drag_and_drop():
             queen_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             king_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
-            white_king_position = pieces_positions[8]
-            black_king_position = pieces_positions[24]
 
-            if is_cell_checked(white_king_position, "White") or is_cell_checked(black_king_position, "Black"):
-                print("Check!")
-            else:
-                print("No check!")
 
             # No more dragged piece
             dragging_piece = None
@@ -544,7 +638,6 @@ while running:
         else:
             # Draws the piece at its position
             draw_piece(piece_id, piece_x_position, piece_y_position)
-    
     pygame.display.flip()
 # Quit pygame if we leave the main loop
 pygame.quit()
