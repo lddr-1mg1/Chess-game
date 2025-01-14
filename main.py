@@ -9,7 +9,7 @@ with open("pieces.json") as f:
 pygame.init()
 
 # Screen settings
-screen_width = 500
+screen_width = 1300
 square_size = screen_width // 8
 light_square_color = "#d5c9bb"
 dark_square_color = "#b2a696"
