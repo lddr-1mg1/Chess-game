@@ -21,7 +21,6 @@ current_player = "White"
 running = True
 dragging_piece = None
 positions_already_have = []
-legal_moves = [] # useless
 
 # Sliced pieces informations (types, colors, positions, moves, images)
 pieces_types = {}
@@ -86,7 +85,7 @@ def is_cell_occuped(x, y):
             return True
     return False
 
-def can_move(piece_id):
+def turn(piece_id):
     return pieces_colors[piece_id] == current_player # Check if its the current player turn
 
 def is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
@@ -126,6 +125,18 @@ def catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
                 return False
     return True
 
+def can_someone_move(color):
+    legal_moves = []
+    for cell in accessible_cells(color):
+        if not is_cell_checked(cell, color):
+            legal_moves.append(cell)
+    print(legal_moves)
+    if legal_moves == 0:
+        print("False")
+        return False
+    else:
+        print("true")
+        return True
 # Return the accessible cells of all pieces for a color
 def accessible_cells(color):
     accessibles_cells = [] # Contains all the accessible cells
@@ -415,7 +426,7 @@ def is_king_in_check(color):
     return False
 
 def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
-    if not can_move(piece_id): 
+    if not turn(piece_id): 
         return 
 
     # Save current piece position
@@ -465,6 +476,7 @@ def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_positio
         # Check draw
         draw_by_repitition()
         draw_by_lack_of_pieces()
+        can_someone_move(current_player)
 
 def handle_drag_and_drop():
     global dragging_piece
