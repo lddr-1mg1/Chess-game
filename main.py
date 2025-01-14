@@ -9,7 +9,7 @@ with open("pieces.json") as f:
 pygame.init()
 
 # Screen settings
-screen_width = 1000
+screen_width = 500
 square_size = screen_width // 8
 light_square_color = "#d5c9bb"
 dark_square_color = "#b2a696"
@@ -53,6 +53,12 @@ def draw_piece(piece_id, piece_x_position, piece_y_position):
     grid_x_position = (piece_x_position * square_size) + (square_size - piece_image.get_width()) // 2 # x center the piece on the square
     grid_y_position = (piece_y_position * square_size) + (square_size - piece_image.get_height()) // 2 # y center the piece on the square
     screen.blit(piece_image, (grid_x_position, grid_y_position)) # Draw the piece on the screen
+
+def draw_by_lack_of_pieces(): # pas exactement correcte
+    nb_pieces = len(pieces_positions)
+    if nb_pieces == 2:
+        draw_text("Nulle par manque de matériel") # Draw the text "Nulle par manque de materiel"
+
 
 def draw_by_repitition():
     immutable_positions = tuple(sorted((piece_id, tuple(piece_position)) for piece_id, piece_position in pieces_positions.items())) # Convert the dict to a tuple of tuples wich can be hashed (By cha)
@@ -276,43 +282,46 @@ def queen_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_pos
 def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "king" not in pieces_types[piece_id]: # Checks if the piece is a king
         return
-
-    if not is_cell_checked([piece_x_position, piece_y_position], pieces_colors[piece_id]):
-        if (((pieces_moves[8] == 0 and pieces_moves[1] == 0) or (pieces_moves[24] == 0 and pieces_moves[17] == 0)) and new_piece_x_position == 1):
-            print (dragging_piece)
-            if dragging_piece == 8:
-                if [2, 0] in accessible_cells("Black"):
-                    return
-                if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
-                    return
+        
+    if(pieces_moves[8] == 0 and pieces_moves[1] == 0 and dragging_piece == 8) and new_piece_x_position == 1 and not is_king_in_check("White"):
+        print("le")
+        if [2, 0] in accessible_cells("Black"):
+            return
+        if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
+            return
             
-            elif dragging_piece == 24:
-                if [2, 7] in accessible_cells("White"):
-                    return
-                if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
-                    return
+    elif(pieces_moves[24] == 0 and pieces_moves[17] == 0 and dragging_piece == 24) and new_piece_x_position == 1 and not is_king_in_check("Black"):
+        print("la")
+        if [2, 7] in accessible_cells("White"):
+            return
+        if not (new_piece_x_position - piece_x_position) >= -2 and (new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1:
+            return
     
-        elif ((pieces_moves[8] == 0 and pieces_moves[2] == 0) and new_piece_y_position == 0):
-            if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
-                return
-            if is_cell_occuped(6, 0) and new_piece_x_position == 5:
-                return
-            if [4, 0] in accessible_cells("Black") or [5, 0] in accessible_cells("Black"):
-                return
+    elif ((pieces_moves[8] == 0 and pieces_moves[2] == 0) and new_piece_y_position == 0) and not is_king_in_check("White"):
+        print("da")
+        if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
+            return
+        if is_cell_occuped(6, 0) and new_piece_x_position == 5:
+            return
+        if [4, 0] in accessible_cells("Black") or [5, 0] in accessible_cells("Black"):
+            return
 
-        elif ((pieces_moves[24] == 0 and pieces_moves[18] == 0) and new_piece_y_position == 7):
-            if is_cell_occuped(6, 7) and new_piece_x_position == 5:
-                return
-            if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
-                return
-            if [4, 7] in accessible_cells("White") or [5, 7] in accessible_cells("White"):
-                return
+    elif ((pieces_moves[24] == 0 and pieces_moves[18] == 0) and new_piece_y_position == 7) and not is_king_in_check("Black"):
+        print("kjgn")
+        if is_cell_occuped(6, 7) and new_piece_x_position == 5:
+            return
+        if not (new_piece_x_position - piece_x_position) <= 2 and (new_piece_y_position - piece_y_position) <= 1:
+            return
+        if [4, 7] in accessible_cells("White") or [5, 7] in accessible_cells("White"):
+            return
     
     # Checks king if movement is for the king.
     else:
-        
+        print("de")
         if not (abs(new_piece_x_position - piece_x_position) <= 1 and abs(new_piece_y_position - piece_y_position) <= 1):
             return
+    
+    print("ICI")
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
     little_castle(pieces_positions[dragging_piece])
     big_castle(pieces_positions[dragging_piece])
@@ -455,6 +464,7 @@ def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_positio
         pieces_moves[piece_id] += 1
         # Check draw
         draw_by_repitition()
+        draw_by_lack_of_pieces()
 
 def handle_drag_and_drop():
     global dragging_piece
