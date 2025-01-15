@@ -245,10 +245,10 @@ def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_positio
                             return True
     return False
 
-def is_prise_en_passant_legit_for_stealmate(pawn_id, new_piece_x_position, new_piece_y_position):
-    piece_x_position, piece_y_position = pieces_positions[pawn_id] # Get the pawn position
-    pawn_color = pieces_colors[pawn_id] # Get the pawn color
-    direction = 1 if pawn_color == "White" else -1 # Get the direction of the pawn
+def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_position, remove_piece=True):
+    piece_x_position, piece_y_position = pieces_positions[pawn_id]  # Get the pawn position
+    pawn_color = pieces_colors[pawn_id]                            # Get the pawn color
+    direction = 1 if pawn_color == "White" else -1                 # Get the direction of the pawn
 
     # If the pawn moves diagonally
     if (new_piece_x_position, new_piece_y_position) in [
@@ -258,7 +258,7 @@ def is_prise_en_passant_legit_for_stealmate(pawn_id, new_piece_x_position, new_p
         # Get the adjacent cells
         adjacents_positions = [
             (piece_x_position + 1, piece_y_position),
-            (piece_x_position - 1,piece_y_position)
+            (piece_x_position - 1, piece_y_position)
         ]
 
         # For each adjacent cell
@@ -270,8 +270,14 @@ def is_prise_en_passant_legit_for_stealmate(pawn_id, new_piece_x_position, new_p
                     # If the target color is different from the pawn color and the target has never moved (so possibly moved 2 squares)
                     if pieces_colors[target_id] != pawn_color and pieces_moves[target_id] == 1:
                         if new_piece_x_position == target_position[0]:
+                            # Delete the piece only if remove_piece est True
+                            if remove_piece:
+                                del pieces_positions[target_id]
                             return True
     return False
+
+def is_prise_en_passant_legit_for_stealmate(pawn_id, new_piece_x_position, new_piece_y_position):
+    return is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_position, remove_piece=False)
 
 def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "pawn" not in pieces_types[piece_id]:
