@@ -53,43 +53,43 @@ def draw_piece(piece_id, piece_x_position, piece_y_position):
     grid_y_position = (piece_y_position * square_size) + (square_size - piece_image.get_height()) // 2 # y center the piece on the square
     screen.blit(piece_image, (grid_x_position, grid_y_position)) # Draw the piece on the screen
 
-def draw_by_lack_of_pieces(): # Not the exact rule 
+def draw_by_lack_of_pieces(): # pas exactement correcte
     nb_pieces = len(pieces_positions)
     if nb_pieces == 2:
-        draw_text("Draw by lack of pieces", "./sounds/lose.mp3") # Draw the text "Nulle par manque de materiel"
+        draw_text("Nulle par manque de matériel") # Draw the text "Nulle par manque de materiel"
+
 
 def draw_by_repitition():
     immutable_positions = tuple(sorted((piece_id, tuple(piece_position)) for piece_id, piece_position in pieces_positions.items())) # Convert the dict to a tuple of tuples wich can be hashed (By cha)
     positions_already_have.append(immutable_positions) #Add the current position to the list of positions already have
     counter = Counter(positions_already_have) # Count the number of times each position appears
     if any(count == 3 for count in counter.values()): # If a position appears 3 times 
-        draw_text("Draw by repetition", "./sounds/lose.mp3") # Draw the text "Draw by repitition"
+        draw_text("DRAW BY REPETITION") # Draw the text "Draw by repitition"
 
-def draw_text(text, sound=None):
+def draw_text(text):
     screen.blit(blured_background, (0, 0))  # Display the background
     font = pygame.font.SysFont("Segoe_ui", 66, bold=True)  # Create a font 
     message = font.render(text, True, pygame.Color("#FFFFFF")) # Create text
     text_rect = message.get_rect(center=(screen_width // 2, screen_width // 2)) # Center the text
     screen.blit(message, text_rect.topleft)  # Display the text
     pygame.display.flip()  # Update screen
-    play_sound(sound)
     pygame.time.wait(5000)  # Wait 10 seconds
     pygame.quit()  # Quit pygame
 
 def is_within_board(x, y):
     return 0 <= x < 8 and 0 <= y < 8  # Check if the position is within the board
 
-def is_cell_occuped(cell_x_position, cell_y_position):
+def is_cell_occuped(x, y):
     for position in pieces_positions.values(): # For each position in the pieces positions
-        if position == [cell_x_position, cell_y_position]: # Check if the position is occupied
+        if position == [x, y]: # Check if the position is occupied
             return True
     return False
 
-def is_cell_occuped_by_color(cell_x_position, cell_y_position, color):
-    for piece_id, _ in pieces_positions.items():
-        if pieces_positions[piece_id] == [cell_x_position, cell_y_position]:
+def is_cell_occuped_by_color(x, y, color):
+    for piece_id, piece_position in pieces_positions.items():
+        if pieces_positions[piece_id] == [x, y]:
             if pieces_colors[piece_id] == color:
-                return True 
+                return True
     return False
 
 def turn(piece_id):
@@ -132,86 +132,135 @@ def catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
                 return False
     return True
 
-# Almost the same code as piece_movement (exept for the pawn) but returning all the possible moves by a color, could be optimized
-def get_piece_accessible_cells(piece_id, stealmate=False):
-    piece_x_position,  piece_y_position = pieces_positions[piece_id]
-    piece_type = pieces_types[piece_id]
-    legal_moves = []
-    if "rook" in piece_type:
-        for cell_x_position in range(8):
-            for cell_y_position in range(8):
-                if (cell_x_position == piece_x_position or cell_y_position == piece_y_position) and is_path_clear(piece_x_position, piece_y_position, cell_x_position, cell_y_position):
-                    if not stealmate or [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
-                        legal_moves.append([cell_x_position, cell_y_position])
-    elif "knight" in piece_type:
-        for cell_x_position in range(8):
-            for cell_y_position in range(8):
-                if ((abs(cell_x_position - piece_x_position) == 2 and abs(cell_y_position - piece_y_position) == 1) or
-                    (abs(cell_x_position - piece_x_position) == 1 and abs(cell_y_position - piece_y_position) == 2)):
-                    if not stealmate or [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
-                        legal_moves.append([cell_x_position, cell_y_position])
-    elif "bishop" in piece_type:
-        for cell_x_position in range(8):
-            for cell_y_position in range(8):
-                if abs(cell_x_position - piece_x_position) == abs(cell_y_position - piece_y_position) and is_path_clear(piece_x_position, piece_y_position, cell_x_position, cell_y_position):
-                    if not stealmate or [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
-                        legal_moves.append([cell_x_position, cell_y_position])
-    elif "queen" in piece_type:
-        for cell_x_position in range(8):
-            for cell_y_position in range(8):
-                if (abs(cell_x_position - piece_x_position) == abs(cell_y_position - piece_y_position) or cell_x_position == piece_x_position or cell_y_position == piece_y_position):
-                    if is_path_clear(piece_x_position, piece_y_position, cell_x_position, cell_y_position):
-                        if not stealmate or [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
-                            legal_moves.append([cell_x_position, cell_y_position])
-    # The pawn move two ways, front when there is no piece in front of it and diagonal when there is a piece to capture
-    elif "pawn" in piece_type:
-        if stealmate:
-            direction = 1 if "White_pawn" in piece_type else -1 # Get the direction of the pawn (1 or -1)
-            movement = [1, 2] if pieces_moves[piece_id] == 0 else [1] # If the pawn has never moved it can move 2 squares else 1 square
-            for step in movement:
-                new_piece_x_position, new_piece_y_position = piece_x_position, piece_y_position + direction * step
-                if is_within_board(new_piece_x_position, new_piece_y_position):
-                    if [new_piece_x_position, new_piece_y_position] not in pieces_positions.values() and new_piece_y_position != piece_y_position:
-                        legal_moves.append([new_piece_x_position, new_piece_y_position])
-            diagonal_positions = [(piece_x_position - 1, piece_y_position + direction), (piece_x_position + 1, piece_y_position + direction)]
-            for new_piece_x_position, new_piece_y_position in diagonal_positions:
-                if is_within_board(new_piece_x_position, new_piece_y_position):
-                    for target_id, target_position in pieces_positions.items():
-                        if target_position == [new_piece_x_position, new_piece_y_position] and pieces_colors[target_id] != pieces_colors[piece_id] and new_piece_y_position != piece_y_position:
-                            legal_moves.append([new_piece_x_position, new_piece_y_position])
-            for cell_x_position in range(8):
-                for cell_y_position in range(8):
-                    if is_prise_en_passant_legit_for_stealmate(piece_id, cell_x_position, cell_y_position) and cell_y_position != piece_y_position:
-                        legal_moves.append([cell_x_position, cell_y_position])
-        else:
-            direction = 1 if "White_pawn" in piece_type else -1
-            left_capture = [piece_x_position - 1, piece_y_position + direction]
-            right_capture = [piece_x_position + 1, piece_y_position + direction]
-            if is_within_board(left_capture[0], left_capture[1]):
-                legal_moves.append(left_capture)
-            if is_within_board(right_capture[0], right_capture[1]):
-                legal_moves.append(right_capture)
-    elif "king" in piece_type:
-        for cell_x_position in range(8):
-            for cell_y_position in range(8):
-                if abs(cell_x_position - piece_x_position) <= 1 and abs(cell_y_position - piece_y_position) <= 1:
-                    if not stealmate or [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
-                        legal_moves.append([cell_x_position, cell_y_position])
-    return legal_moves
+def accessible_cells(color): #to make the check
+    accessibles_cells = [] # Contains all the accessible cells
+    for piece_id in pieces_positions: # For each piece
+        if pieces_colors[piece_id] == color: # If the piece color is the same as the color
+            piece_x_position, piece_y_position = pieces_positions[piece_id] # Slice the piece position
+            piece_type = pieces_types[piece_id] # Get the piece type
+            # Basically the as the different pieces movements but instead of moving the piece we append the accessible cells
+            if "rook" in piece_type:
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        if (x_cell == piece_x_position or y_cell == piece_y_position) and is_path_clear(piece_x_position, piece_y_position, x_cell, y_cell):
+                            accessibles_cells.append([x_cell, y_cell])
 
-def accessible_cells(color):
-    result = []
-    for piece_id in pieces_positions:
-        if pieces_colors[piece_id] == color:
-            result += get_piece_accessible_cells(piece_id, stealmate=False)
-    return result
+            elif "knight" in piece_type:
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        if ((abs(x_cell - piece_x_position) == 2 and abs(y_cell - piece_y_position) == 1) or
+                            (abs(x_cell - piece_x_position) == 1 and abs(y_cell - piece_y_position) == 2)):
+                            accessibles_cells.append([x_cell, y_cell])
 
-def accessible_cells_for_stealmate(color):
-    result = []
-    for piece_id in pieces_positions:
-        if pieces_colors[piece_id] == color:
-            result += get_piece_accessible_cells(piece_id, stealmate=True)
-    return result
+            elif "bishop" in piece_type:
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        if abs(x_cell - piece_x_position) == abs(y_cell - piece_y_position) and is_path_clear(piece_x_position, piece_y_position, x_cell, y_cell):
+                            accessibles_cells.append([x_cell, y_cell])
+
+            elif "queen" in piece_type:
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        if (abs(x_cell - piece_x_position) == abs(y_cell - piece_y_position)
+                                or x_cell == piece_x_position
+                                or y_cell == piece_y_position):
+                            if is_path_clear(piece_x_position, piece_y_position, x_cell, y_cell):
+                                accessibles_cells.append([x_cell, y_cell])
+            
+            # We only calculate the catching movements for the pawns because this function is only used for the check
+            elif "pawn" in piece_type:
+                direction = -1 if "Black_pawn" in piece_type else 1
+                left_diag = [piece_x_position - 1, piece_y_position + direction]
+                right_diag = [piece_x_position + 1, piece_y_position + direction]
+                if is_within_board(left_diag[0], left_diag[1]):
+                    accessibles_cells.append(left_diag)
+                if is_within_board(right_diag[0], right_diag[1]):
+                    accessibles_cells.append(right_diag)
+
+            elif "king" in piece_type:
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        if abs(x_cell - piece_x_position) <= 1 and abs(y_cell - piece_y_position) <= 1:
+                            accessibles_cells.append([x_cell, y_cell])
+    
+    return accessibles_cells # Return every pieces accessible cells
+
+def accessible_cells_for_stealmate(color): #to make the stealmat (pawn)
+    accessibles_cells_for_stealmate = [] # Contains all the accessible cells
+    for piece_id in pieces_positions: # For each piece
+        if pieces_colors[piece_id] == color: # If the piece color is the same as the color
+            piece_x_position, piece_y_position = pieces_positions[piece_id] # Slice the piece position
+            piece_type = pieces_types[piece_id] # Get the piece type
+            # Basically the as the different pieces movements but instead of moving the piece we append the accessible cells
+            if "rook" in piece_type:
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        if (x_cell == piece_x_position or y_cell == piece_y_position) and is_path_clear(piece_x_position, piece_y_position, x_cell, y_cell) and [x_cell, y_cell] != [piece_x_position, piece_y_position]:
+                            accessibles_cells_for_stealmate.append([x_cell, y_cell])
+
+            elif "knight" in piece_type:
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        if ((abs(x_cell - piece_x_position) == 2 and abs(y_cell - piece_y_position) == 1) and [x_cell, y_cell] != [piece_x_position, piece_y_position] or
+                            (abs(x_cell - piece_x_position) == 1 and abs(y_cell - piece_y_position) == 2) and [x_cell, y_cell] != [piece_x_position, piece_y_position]):
+                            accessibles_cells_for_stealmate.append([x_cell, y_cell])
+
+            elif "bishop" in piece_type:
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        if abs(x_cell - piece_x_position) == abs(y_cell - piece_y_position) and is_path_clear(piece_x_position, piece_y_position, x_cell, y_cell) and [x_cell, y_cell] != [piece_x_position, piece_y_position]:
+                            accessibles_cells_for_stealmate.append([x_cell, y_cell])
+
+            elif "queen" in piece_type:
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        if (abs(x_cell - piece_x_position) == abs(y_cell - piece_y_position) and [x_cell, y_cell] != [piece_x_position, piece_y_position]
+                                or x_cell == piece_x_position and [x_cell, y_cell] != [piece_x_position, piece_y_position]
+                                or y_cell == piece_y_position) and [x_cell, y_cell] != [piece_x_position, piece_y_position]:
+                            if is_path_clear(piece_x_position, piece_y_position, x_cell, y_cell):
+                                accessibles_cells_for_stealmate.append([x_cell, y_cell])
+            
+            elif "pawn" in piece_type:
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        direction = -1 if "Black_pawn" in pieces_types[piece_id] else 1 # Get the direction of the pawn (1 or -1)
+                        steps = [1, 2] if pieces_moves[piece_id] == 0 else [1] # If the pawn has never moved it can move 2 squares else 1 square
+                        allowed_moves = [(piece_x_position, piece_y_position + direction * step) for step in steps] # Calculate the allowed moves
+    
+                         # Get diagonal moves for captguring
+                        diagonal_captures = [
+                            (piece_x_position - 1, piece_y_position + direction),
+                            (piece_x_position + 1, piece_y_position + direction)
+                        ]
+
+                        # Strait movement, if the new position is allowed 
+                        if (x_cell, y_cell) in allowed_moves:
+                        # If the new position is not occupied
+                            if not [x_cell, y_cell] in pieces_positions.values() and (y_cell - piece_y_position != 0):
+                                accessibles_cells_for_stealmate.append([x_cell, y_cell])
+
+                        # Diagonal capture, if the new position is a diagonal
+                        if (x_cell, y_cell) in diagonal_captures:
+                            # Sclice the new position
+                            new_piece_position = [x_cell, y_cell]
+                            # For each piece on the board
+                            for target_id, position in pieces_positions.items():
+                                # If the target position is the new position and the target is not the piece
+                                if position == new_piece_position and pieces_colors[target_id] != pieces_colors[piece_id] and (y_cell - piece_y_position != 0):
+                                    accessibles_cells_for_stealmate.append([x_cell, y_cell])
+
+                        # Prise en passant
+                        if is_prise_en_passant_legit_for_stealmate(piece_id, x_cell,y_cell):
+                            if y_cell - piece_y_position != 0:
+                                accessibles_cells_for_stealmate.append([x_cell, y_cell])
+
+            elif "king" in piece_type:
+                for x_cell in range(8):
+                    for y_cell in range(8):
+                        if abs(x_cell - piece_x_position) <= 1 and abs(y_cell - piece_y_position) <= 1 and (x_cell - piece_x_position != 0):
+                            accessibles_cells_for_stealmate.append([x_cell, y_cell])
+    
+    return accessibles_cells_for_stealmate # Return every pieces accessible cells
 
 def is_cell_checked(cell_position, target_color):
     opponent_color = "White" if target_color == "Black" else "Black" # Get the opponent color
@@ -246,10 +295,10 @@ def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_positio
                             return True
     return False
 
-def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_position, remove_piece=True):
-    piece_x_position, piece_y_position = pieces_positions[pawn_id]  # Get the pawn position
-    pawn_color = pieces_colors[pawn_id]                            # Get the pawn color
-    direction = 1 if pawn_color == "White" else -1                 # Get the direction of the pawn
+def is_prise_en_passant_legit_for_stealmate(pawn_id, new_piece_x_position, new_piece_y_position):
+    piece_x_position, piece_y_position = pieces_positions[pawn_id] # Get the pawn position
+    pawn_color = pieces_colors[pawn_id] # Get the pawn color
+    direction = 1 if pawn_color == "White" else -1 # Get the direction of the pawn
 
     # If the pawn moves diagonally
     if (new_piece_x_position, new_piece_y_position) in [
@@ -259,7 +308,7 @@ def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_positio
         # Get the adjacent cells
         adjacents_positions = [
             (piece_x_position + 1, piece_y_position),
-            (piece_x_position - 1, piece_y_position)
+            (piece_x_position - 1,piece_y_position)
         ]
 
         # For each adjacent cell
@@ -271,14 +320,8 @@ def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_positio
                     # If the target color is different from the pawn color and the target has never moved (so possibly moved 2 squares)
                     if pieces_colors[target_id] != pawn_color and pieces_moves[target_id] == 1:
                         if new_piece_x_position == target_position[0]:
-                            # Delete the piece only if remove_piece est True
-                            if remove_piece:
-                                del pieces_positions[target_id]
                             return True
     return False
-
-def is_prise_en_passant_legit_for_stealmate(pawn_id, new_piece_x_position, new_piece_y_position):
-    return is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_position, remove_piece=False)
 
 def pawn_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "pawn" not in pieces_types[piece_id]:
@@ -338,6 +381,7 @@ def bishop_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_po
     if not abs(piece_x_position - new_piece_x_position) == abs(piece_y_position - new_piece_y_position):
         return
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
+
 
 def queen_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "queen" not in pieces_types[piece_id]:
@@ -473,6 +517,7 @@ def is_king_in_check(color):
             return is_cell_checked(piece_position, color)
     return False
 
+
 def king_possible_move(color):
     king_id = 8 if color == "White" else 24
     opposite_color = "White" if color == "Black" else "Black"
@@ -499,45 +544,31 @@ def stealmate(color):
 
     accessible_cells_without_the_king = set(map(tuple, accessible_cells_for_stealmate(color))) - set(map(tuple, cell_next_to_the_king))
     if len(king_possible_move(color)) == 0 and len(accessible_cells_without_the_king) == 0:
-        draw_text("Pat !!! C'est pas passé loin.", "./sounds/win.mp3")
+        draw_text("Pat !!! C'est pas passé loin.")
 
 def mate(color):
-    # Find the king's position based on the given color.
     king_id = 8 if color == "White" else 24
     king_position = pieces_positions[king_id]
-    
-    # Find all cells next to the king that are not occupied by the same color.
     cell_next_to_the_king = []
     for row in range(8):
         for col in range(8):
             if (abs(row - king_position[0]) <= 1 and abs(col - king_position[1]) <= 1):
                 if not is_cell_occuped_by_color(row, col, color):
                     cell_next_to_the_king.append([row, col])
+    accessible_cells_without_the_king = set(map(tuple, accessible_cells_for_stealmate(color))) - set(map(tuple, cell_next_to_the_king))
     
-    accessible_cells_counter = Counter(map(tuple, accessible_cells_for_stealmate(color)))
-    cell_next_king_counter = Counter(cell_next_to_the_king)
-    
-    print("dodo", accessible_cells_counter)
-    print("ta", cell_next_king_counter)
-    # Determines the accessible cells for the opponent's pieces excluding the cells next to the king.
-    accessible_cells_without_the_king = accessible_cells_counter - cell_next_king_counter
-    result_accessible_cell = set(accessible_cells_without_the_king.elements())
-    
-    print("aaa", result_accessible_cell)
-    
-    #  Checks if the king is in check.
     opposite_color = "White" if color == "Black" else "Black"
     opposite_color_in_french = "Blancs" if opposite_color == "White" else "Noirs"
 
     if is_king_in_check(color):
-        # If the king is in check and has no possible moves, it tries to place a pawn to block the check.
         if len(king_possible_move(color)) == 0:
             id_counter = 33
-            for cell in  result_accessible_cell:
+            for cell in accessible_cells_without_the_king:
+                    
                 if not is_cell_checked(cell, color):
                     pieces_positions[id_counter] = [cell[0], cell[1]]
-                    pieces_types[id_counter] = f"{color}_pawn"
-                    pieces_images[id_counter] = "./images/w_pawn_png_shadow_512px.png"
+                    pieces_types[id_counter] = f"{color}""_pawn"
+                    pieces_images[id_counter] =  "./images/w_pawn_png_shadow_512px.png"
                     pieces_colors[id_counter] = f"{color}"
 
                     if not is_king_in_check(color):
@@ -547,21 +578,31 @@ def mate(color):
                         del pieces_types[id_counter]
                         return
 
-                    # Remove the piece from the list after checking if the king is in check
+                    # Supprimer la pièce de la liste après avoir vérifié si le roi est en échec
                     del pieces_positions[id_counter]
                     del pieces_colors[id_counter]
                     del pieces_images[id_counter]
                     del pieces_types[id_counter]
                 
-            # If placing a pawn does not resolve the check this is a check mate and it declares the opponent as the winner.
             if is_king_in_check:
-                print("aaa", accessible_cells_without_the_king)
-                draw_text(f"Les {opposite_color_in_french} ont gagné !!!", "./sounds/win.mp3")
+                play_victory_sound("success-fanfare-trumpets-6185.ogg")
+                draw_text(f"Les {opposite_color_in_french} ont gagné !!!")
 
-def play_sound(sound_file):
+
+def play_victory_sound(sound_file):
     pygame.mixer.init()
-    victory_sound = pygame.mixer.Sound(sound_file)
-    victory_sound.play()
+    
+    try:
+        victory_sound = pygame.mixer.Sound(sound_file)
+
+        victory_sound.play()
+
+        while pygame.mixer.get_busy():
+            pass
+
+        # Quitter Pygame
+    finally:
+        pygame.quit()
 
 def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if not turn(piece_id): 
@@ -616,12 +657,6 @@ def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_positio
         draw_by_lack_of_pieces()
         mate(current_player)
         stealmate(current_player)
-    
-    # Play sound depending on the move
-    if piece_capturee_id is not None:
-        play_sound("./sounds/capture.mp3")
-    else:
-        play_sound("./sounds/move.mp3")
 
     return True
 
@@ -656,6 +691,8 @@ def handle_drag_and_drop():
             bishop_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             queen_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             king_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
+
+
 
             # No more dragged piece
             dragging_piece = None
