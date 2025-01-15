@@ -339,7 +339,6 @@ def bishop_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_po
         return
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
-
 def queen_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "queen" not in pieces_types[piece_id]:
         return
