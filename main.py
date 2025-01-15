@@ -517,14 +517,10 @@ def mate(color):
     accessible_cells_counter = Counter(map(tuple, accessible_cells_for_stealmate(color)))
     cell_next_king_counter = Counter(map(tuple, cell_next_to_the_king))
     
-    print("dodo", accessible_cells_counter)
-    print("ta", cell_next_king_counter)
     # Determines the accessible cells for the opponent's pieces excluding the cells next to the king.
     accessible_cells_without_the_king = accessible_cells_counter - cell_next_king_counter
     result_accessible_cell = set(accessible_cells_without_the_king.elements())
-    
-    print("aaa", result_accessible_cell)
-    
+        
     #  Checks if the king is in check.
     opposite_color = "White" if color == "Black" else "Black"
     opposite_color_in_french = "Blancs" if opposite_color == "White" else "Noirs"
@@ -555,7 +551,6 @@ def mate(color):
                 
             # If placing a pawn does not resolve the check this is a check mate and it declares the opponent as the winner.
             if is_king_in_check:
-                print("aaa", accessible_cells_without_the_king)
                 draw_text(f"Les {opposite_color_in_french} ont gagné !!!", "./sounds/win.mp3")
 
 def play_sound(sound_file):
