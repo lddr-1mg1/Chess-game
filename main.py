@@ -9,7 +9,7 @@ with open("pieces.json") as f:
 pygame.init()
 
 # Screen settings
-screen_width = 1000
+screen_width = 1300
 square_size = screen_width // 8
 light_square_color = "#d5c9bb"
 dark_square_color = "#b2a696"
@@ -209,8 +209,8 @@ def accessible_cells(color):
 def accessible_cells_for_stealmate(color):
     result = []
     for piece_id in pieces_positions:
-        if pieces_colors[piece_id] == color:
-            result += get_piece_accessible_cells(piece_id, True)
+        if pieces_colors[piece_id] != color:
+            result += get_piece_accessible_cells(piece_id, stealmate=True)
     return result
 
 def is_cell_checked(cell_position, target_color):
