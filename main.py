@@ -209,7 +209,7 @@ def accessible_cells(color):
 def accessible_cells_for_stealmate(color):
     result = []
     for piece_id in pieces_positions:
-        if pieces_colors[piece_id] == color:
+        if pieces_colors[piece_id] != color:
             result += get_piece_accessible_cells(piece_id, stealmate=True)
     return result
 
@@ -516,7 +516,7 @@ def mate(color):
                     cell_next_to_the_king.append([row, col])
     
     accessible_cells_counter = Counter(map(tuple, accessible_cells_for_stealmate(color)))
-    cell_next_king_counter = Counter(cell_next_to_the_king)
+    cell_next_king_counter = Counter(map(tuple, cell_next_to_the_king))
     
     print("dodo", accessible_cells_counter)
     print("ta", cell_next_king_counter)
