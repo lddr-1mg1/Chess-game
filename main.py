@@ -56,22 +56,23 @@ def draw_piece(piece_id, piece_x_position, piece_y_position):
 def draw_by_lack_of_pieces(): # Not the exact rule 
     nb_pieces = len(pieces_positions)
     if nb_pieces == 2:
-        draw_text("Draw by lack of pieces") # Draw the text "Nulle par manque de materiel"
+        draw_text("Draw by lack of pieces", "./sounds/lose.mp3") # Draw the text "Nulle par manque de materiel"
 
 def draw_by_repitition():
     immutable_positions = tuple(sorted((piece_id, tuple(piece_position)) for piece_id, piece_position in pieces_positions.items())) # Convert the dict to a tuple of tuples wich can be hashed (By cha)
     positions_already_have.append(immutable_positions) #Add the current position to the list of positions already have
     counter = Counter(positions_already_have) # Count the number of times each position appears
     if any(count == 3 for count in counter.values()): # If a position appears 3 times 
-        draw_text("Draw by repetition") # Draw the text "Draw by repitition"
+        draw_text("Draw by repetition", "./sounds/lose.mp3") # Draw the text "Draw by repitition"
 
-def draw_text(text):
+def draw_text(text, sound=None):
     screen.blit(blured_background, (0, 0))  # Display the background
     font = pygame.font.SysFont("Segoe_ui", 66, bold=True)  # Create a font 
     message = font.render(text, True, pygame.Color("#FFFFFF")) # Create text
     text_rect = message.get_rect(center=(screen_width // 2, screen_width // 2)) # Center the text
     screen.blit(message, text_rect.topleft)  # Display the text
     pygame.display.flip()  # Update screen
+    play_sound(sound)
     pygame.time.wait(5000)  # Wait 10 seconds
     pygame.quit()  # Quit pygame
 
@@ -473,7 +474,6 @@ def is_king_in_check(color):
             return is_cell_checked(piece_position, color)
     return False
 
-
 def king_possible_move(color):
     king_id = 8 if color == "White" else 24
     opposite_color = "White" if color == "Black" else "Black"
@@ -500,31 +500,37 @@ def stealmate(color):
 
     accessible_cells_without_the_king = set(map(tuple, accessible_cells_for_stealmate(color))) - set(map(tuple, cell_next_to_the_king))
     if len(king_possible_move(color)) == 0 and len(accessible_cells_without_the_king) == 0:
-        draw_text("Pat !!! C'est pas passé loin.")
+        draw_text("Pat !!! C'est pas passé loin.", "./sounds/win.mp3")
 
 def mate(color):
+    # Find the king's position based on the given color.
     king_id = 8 if color == "White" else 24
     king_position = pieces_positions[king_id]
+    
+    # Find all cells next to the king that are not occupied by the same color.
     cell_next_to_the_king = []
     for row in range(8):
         for col in range(8):
             if (abs(row - king_position[0]) <= 1 and abs(col - king_position[1]) <= 1):
                 if not is_cell_occuped_by_color(row, col, color):
                     cell_next_to_the_king.append([row, col])
+    
+    # Determines the accessible cells for the opponent's pieces excluding the cells next to the king.
     accessible_cells_without_the_king = set(map(tuple, accessible_cells_for_stealmate(color))) - set(map(tuple, cell_next_to_the_king))
     
+    #  Checks if the king is in check.
     opposite_color = "White" if color == "Black" else "Black"
     opposite_color_in_french = "Blancs" if opposite_color == "White" else "Noirs"
 
     if is_king_in_check(color):
+        # If the king is in check and has no possible moves, it tries to place a pawn to block the check.
         if len(king_possible_move(color)) == 0:
             id_counter = 33
             for cell in accessible_cells_without_the_king:
-                    
                 if not is_cell_checked(cell, color):
                     pieces_positions[id_counter] = [cell[0], cell[1]]
-                    pieces_types[id_counter] = f"{color}""_pawn"
-                    pieces_images[id_counter] =  "./images/w_pawn_png_shadow_512px.png"
+                    pieces_types[id_counter] = f"{color}_pawn"
+                    pieces_images[id_counter] = "./images/w_pawn_png_shadow_512px.png"
                     pieces_colors[id_counter] = f"{color}"
 
                     if not is_king_in_check(color):
@@ -534,30 +540,20 @@ def mate(color):
                         del pieces_types[id_counter]
                         return
 
-                    # Supprimer la pièce de la liste après avoir vérifié si le roi est en échec
+                    # Remove the piece from the list after checking if the king is in check
                     del pieces_positions[id_counter]
                     del pieces_colors[id_counter]
                     del pieces_images[id_counter]
                     del pieces_types[id_counter]
                 
+            # If placing a pawn does not resolve the check this is a check mate and it declares the opponent as the winner.
             if is_king_in_check:
-                draw_text(f"Les {opposite_color_in_french} ont gagné !!!")
-                play_victory_sound("./sounds/win.mp3")
+                draw_text(f"Les {opposite_color_in_french} ont gagné !!!", "./sounds/win.mp3")
 
-def play_victory_sound(sound_file):
+def play_sound(sound_file):
     pygame.mixer.init()
-    
-    try:
-        victory_sound = pygame.mixer.Sound(sound_file)
-
-        victory_sound.play()
-
-        while pygame.mixer.get_busy():
-            pass
-
-        # Quitter Pygame
-    finally:
-        pygame.quit()
+    victory_sound = pygame.mixer.Sound(sound_file)
+    victory_sound.play()
 
 def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if not turn(piece_id): 
@@ -612,6 +608,12 @@ def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_positio
         draw_by_lack_of_pieces()
         mate(current_player)
         stealmate(current_player)
+    
+    # Play sound depending on the move
+    if piece_capturee_id is not None:
+        play_sound("./sounds/capture.mp3")
+    else:
+        play_sound("./sounds/move.mp3")
 
     return True
 
@@ -646,8 +648,6 @@ def handle_drag_and_drop():
             bishop_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             queen_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
             king_movement(dragging_piece, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
-
-
 
             # No more dragged piece
             dragging_piece = None
