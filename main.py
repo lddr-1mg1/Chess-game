@@ -58,7 +58,6 @@ def draw_by_lack_of_pieces(): # pas exactement correcte
     if nb_pieces == 2:
         draw_text("Nulle par manque de matériel") # Draw the text "Nulle par manque de materiel"
 
-
 def draw_by_repitition():
     immutable_positions = tuple(sorted((piece_id, tuple(piece_position)) for piece_id, piece_position in pieces_positions.items())) # Convert the dict to a tuple of tuples wich can be hashed (By cha)
     positions_already_have.append(immutable_positions) #Add the current position to the list of positions already have
