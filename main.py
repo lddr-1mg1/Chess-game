@@ -536,7 +536,7 @@ def mate(color):
                 
             if is_king_in_check:
                 draw_text(f"Les {opposite_color_in_french} ont gagné !!!")
-                play_victory_sound("./sounds.ogg")
+                play_victory_sound("./sounds/win.mp3")
 
 def play_victory_sound(sound_file):
     pygame.mixer.init()
