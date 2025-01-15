@@ -9,7 +9,7 @@ with open("pieces.json") as f:
 pygame.init()
 
 # Screen settings
-screen_width = 1000
+screen_width = 1024
 square_size = screen_width // 8
 light_square_color = "#d5c9bb"
 dark_square_color = "#b2a696"
@@ -203,14 +203,14 @@ def accessible_cells(color):
     result = []
     for piece_id in pieces_positions:
         if pieces_colors[piece_id] == color:
-            result += get_piece_accessible_cells(piece_id, stealmate=False)
+            result += get_piece_accessible_cells(piece_id, False)
     return result
 
 def accessible_cells_for_stealmate(color):
     result = []
     for piece_id in pieces_positions:
         if pieces_colors[piece_id] != color:
-            result += get_piece_accessible_cells(piece_id, stealmate=True)
+            result += get_piece_accessible_cells(piece_id, True)
     return result
 
 def is_cell_checked(cell_position, target_color):
@@ -516,11 +516,11 @@ def mate(color):
     
     accessible_cells_counter = Counter(map(tuple, accessible_cells_for_stealmate(color)))
     cell_next_king_counter = Counter(map(tuple, cell_next_to_the_king))
-
+    
     # Determines the accessible cells for the opponent's pieces excluding the cells next to the king.
     accessible_cells_without_the_king = accessible_cells_counter - cell_next_king_counter
     result_accessible_cell = set(accessible_cells_without_the_king.elements())
-    
+        
     #  Checks if the king is in check.
     opposite_color = "White" if color == "Black" else "Black"
     opposite_color_in_french = "Blancs" if opposite_color == "White" else "Noirs"
