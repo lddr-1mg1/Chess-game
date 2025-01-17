@@ -141,27 +141,27 @@ def get_piece_accessible_cells(piece_id, stealmate=False):
         for cell_x_position in range(8):
             for cell_y_position in range(8):
                 if (cell_x_position == piece_x_position or cell_y_position == piece_y_position) and is_path_clear(piece_x_position, piece_y_position, cell_x_position, cell_y_position):
-                    if not stealmate or [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
+                    if [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
                         legal_moves.append([cell_x_position, cell_y_position])
     elif "knight" in piece_type:
         for cell_x_position in range(8):
             for cell_y_position in range(8):
                 if ((abs(cell_x_position - piece_x_position) == 2 and abs(cell_y_position - piece_y_position) == 1) or
                     (abs(cell_x_position - piece_x_position) == 1 and abs(cell_y_position - piece_y_position) == 2)):
-                    if not stealmate or [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
+                    if [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
                         legal_moves.append([cell_x_position, cell_y_position])
     elif "bishop" in piece_type:
         for cell_x_position in range(8):
             for cell_y_position in range(8):
                 if abs(cell_x_position - piece_x_position) == abs(cell_y_position - piece_y_position) and is_path_clear(piece_x_position, piece_y_position, cell_x_position, cell_y_position):
-                    if not stealmate or [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
+                    if [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
                         legal_moves.append([cell_x_position, cell_y_position])
     elif "queen" in piece_type:
         for cell_x_position in range(8):
             for cell_y_position in range(8):
-                if (abs(cell_x_position - piece_x_position) == abs(cell_y_position - piece_y_position) or cell_x_position == piece_x_position or cell_y_position == piece_y_position):
+                if (abs(cell_x_position - piece_x_position) == abs(cell_y_position - piece_y_position) or (cell_x_position == piece_x_position or cell_y_position == piece_y_position)):
                     if is_path_clear(piece_x_position, piece_y_position, cell_x_position, cell_y_position):
-                        if not stealmate or [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
+                        if [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
                             legal_moves.append([cell_x_position, cell_y_position])
     # The pawn move two ways, front when there is no piece in front of it and diagonal when there is a piece to capture
     elif "pawn" in piece_type:
@@ -195,8 +195,9 @@ def get_piece_accessible_cells(piece_id, stealmate=False):
         for cell_x_position in range(8):
             for cell_y_position in range(8):
                 if abs(cell_x_position - piece_x_position) <= 1 and abs(cell_y_position - piece_y_position) <= 1:
-                    if not stealmate or [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
+                    if  [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
                         legal_moves.append([cell_x_position, cell_y_position])
+    print("AAAAA", legal_moves)
     return legal_moves
 
 def accessible_cells(color):
@@ -209,7 +210,7 @@ def accessible_cells(color):
 def accessible_cells_for_stealmate(color):
     result = []
     for piece_id in pieces_positions:
-        if pieces_colors[piece_id] != color:
+        if pieces_colors[piece_id] == color:
             result += get_piece_accessible_cells(piece_id, True)
     return result
 
@@ -571,14 +572,14 @@ def move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_positio
         if target_position == [new_piece_x_position, new_piece_y_position] and target_id != piece_id: 
             piece_capturee_id = target_id
             break
-
-    if not catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
-        return False
  
     # Verify if the path is clear
     if "knight" not in pieces_types[piece_id]:
         if not is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
             return False
+
+    if not catch_piece(piece_id, new_piece_x_position, new_piece_y_position):
+        return False
 
     # Verify if the new position is within the board
     if not is_within_board(new_piece_x_position, new_piece_y_position):
