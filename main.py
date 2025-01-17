@@ -218,35 +218,6 @@ def is_cell_checked(cell_position, target_color):
     opponent_color = "White" if target_color == "Black" else "Black" # Get the opponent color
     return cell_position in accessible_cells(opponent_color) # Check if the cell is in the opponent accessible cells if it is the cell is checked
 
-def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_position):
-    piece_x_position, piece_y_position = pieces_positions[pawn_id] # Get the pawn position
-    pawn_color = pieces_colors[pawn_id] # Get the pawn color
-    direction = 1 if pawn_color == "White" else -1 # Get the direction of the pawn
-
-    # If the pawn moves diagonally
-    if (new_piece_x_position, new_piece_y_position) in [
-        (piece_x_position + 1, piece_y_position + direction),
-        (piece_x_position - 1, piece_y_position + direction)
-    ]:
-        # Get the adjacent cells
-        adjacents_positions = [
-            (piece_x_position + 1, piece_y_position),
-            (piece_x_position - 1,piece_y_position)
-        ]
-
-        # For each adjacent cell
-        for adjacent_x, adjacent_y in adjacents_positions:
-            # For each piece on the board
-            for target_id, target_position in pieces_positions.items():
-                # If the target position is the adjacent cell and the target is a pawn
-                if target_position == [adjacent_x, adjacent_y] and pieces_types[target_id] in {"Black_pawn", "White_pawn"}:
-                    # If the target color is different from the pawn color and the target has never moved (so possibly moved 2 squares)
-                    if pieces_colors[target_id] != pawn_color and pieces_moves[target_id] == 1:
-                        if new_piece_x_position == target_position[0]:
-                            del pieces_positions[target_id] # Delete the target piece
-                            return True
-    return False
-
 def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_position, remove_piece=True):
     piece_x_position, piece_y_position = pieces_positions[pawn_id]  # Get the pawn position
     pawn_color = pieces_colors[pawn_id]                            # Get the pawn color
@@ -272,7 +243,7 @@ def is_prise_en_passant_legit(pawn_id, new_piece_x_position, new_piece_y_positio
                     # If the target color is different from the pawn color and the target has never moved (so possibly moved 2 squares)
                     if pieces_colors[target_id] != pawn_color and pieces_moves[target_id] == 1:
                         if new_piece_x_position == target_position[0]:
-                            # Delete the piece only if remove_piece est True
+                            # Delete the piece only if remove_piece is True
                             if remove_piece:
                                 del pieces_positions[target_id]
                             return True
