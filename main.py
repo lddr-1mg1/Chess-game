@@ -197,7 +197,6 @@ def get_piece_accessible_cells(piece_id, stealmate=False):
                 if abs(cell_x_position - piece_x_position) <= 1 and abs(cell_y_position - piece_y_position) <= 1:
                     if  [cell_x_position, cell_y_position] != [piece_x_position, piece_y_position]:
                         legal_moves.append([cell_x_position, cell_y_position])
-    print("AAAAA", legal_moves)
     return legal_moves
 
 def accessible_cells(color):
@@ -294,7 +293,6 @@ def rook_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_posi
     if not (new_piece_x_position == piece_x_position or new_piece_y_position == piece_y_position):
         return
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
-
 
 def knight_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "knight" not in pieces_types[piece_id]:
