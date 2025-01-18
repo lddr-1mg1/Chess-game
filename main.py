@@ -100,7 +100,7 @@ def is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_
     difference_x = new_piece_x_position - piece_x_position
     difference_y = new_piece_y_position - piece_y_position
 
-    # Calculate the direction of the movement (1 or -1)
+    # Calculate the direction of the movement (1 or -1 or 0)
     direction_x = difference_x // abs(difference_x) if difference_x != 0 else 0
     direction_y = difference_y // abs(difference_y) if difference_y != 0 else 0
     
@@ -110,7 +110,8 @@ def is_path_clear(piece_x_position, piece_y_position, new_piece_x_position, new_
     
     while (movement_x, movement_y) != (new_piece_x_position, new_piece_y_position):
         if [movement_x, movement_y] in pieces_positions.values(): # If the cell is occupied return false
-            return False
+            if not pieces_positions[8] == [movement_x, movement_y] or pieces_positions[24] == [movement_x, movement_y]:
+                return False
         # Increases the movement by the direction
         movement_x += direction_x 
         movement_y += direction_y
@@ -359,17 +360,21 @@ def little_castle(position_of_the_king):
     if pieces_moves[8] == 1: # If the white king has not moved
         if position_of_the_king == [1, 0]:
             pieces_positions[1] = [2, 0]  # Tour blanche
+            pieces_moves[8] = 2
     elif pieces_moves[24] == 1: # If the black king has not moved
         if position_of_the_king == [1, 7]:
             pieces_positions[17] = [2, 7]  # Tour noire
+            pieces_moves[24] = 2
 
 def big_castle(position_of_the_king):
     if pieces_moves[8] == 1: # If the white king has not moved
         if position_of_the_king == [5, 0]:
             pieces_positions[2] = [4, 0]
+            pieces_moves[8] = 2
     if pieces_moves[24] == 1: # If the black king has not moved
         if position_of_the_king == [5, 7]:
             pieces_positions[18] = [4, 7]
+            pieces_moves[24] = 2
 
 def check_promotion(piece_id, piece_y_position):
     piece_type = pieces_types[piece_id] # Get the piece type
