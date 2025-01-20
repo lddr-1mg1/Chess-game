@@ -2,8 +2,8 @@ import json
 import pygame
 from collections import Counter
 
-with open("pieces.json") as f:
-    pieces = json.load(f)  # Import every pieces settings
+with open("pieces.json") as json_file:
+    pieces = json.load(json_file)  # Import every pieces settings
 
 # Initialize pygame
 pygame.init()
@@ -59,7 +59,7 @@ def draw_by_lack_of_pieces(): # Not the exact rule
         draw_text("Draw by lack of pieces", "./sounds/lose.mp3") # Draw the text "Nulle par manque de materiel"
 
 def draw_by_repitition():
-    immutable_positions = tuple(sorted((piece_id, tuple(piece_position)) for piece_id, piece_position in pieces_positions.items())) # Convert the dict to a tuple of tuples wich can be hashed (By cha)
+    immutable_positions = tuple(sorted((piece_id, tuple(piece_position)) for piece_id, piece_position in pieces_positions.items())) # Convert the dict to a tuple of tuples wich can be hashed (By chatGPT)
     positions_already_have.append(immutable_positions) #Add the current position to the list of positions already have
     counter = Counter(positions_already_have) # Count the number of times each position appears
     if any(count == 3 for count in counter.values()): # If a position appears 3 times 
