@@ -313,6 +313,8 @@ def bishop_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_po
 def queen_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
     if "queen" not in pieces_types[piece_id]:
         return
+    if not abs(piece_x_position - new_piece_x_position) == abs(piece_y_position - new_piece_y_position) or (new_piece_x_position == piece_x_position or new_piece_y_position == piece_y_position):
+        return
     move_piece(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position)
 
 def king_movement(piece_id, piece_x_position, piece_y_position, new_piece_x_position, new_piece_y_position):
